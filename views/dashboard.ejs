@@ -34,9 +34,9 @@
     </div>
     <div class="card-body">
       <% if (tickets.length > 0) { %>
-        <div class="ticket-list">
+        <div class="ticket-list" id="ticket-list">
           <% tickets.forEach(ticket => { %>
-            <div class="ticket" data-status="<%= ticket.status %>">
+            <div class="ticket" data-status="<%= ticket.status %>" data-ticket-id="<%= ticket._id %>">
               <div class="ticket-info">
                 <h4>
                   <a href="/tickets/<%= ticket._id %>"><%= ticket.title %></a>
@@ -61,14 +61,16 @@
               <div class="actions">
                 <a href="/tickets/<%= ticket._id %>" class="btn btn-primary">View</a>
                 <% if (isAdmin) { %>
-                  <form action="/admin/tickets/<%= ticket._id %>/status?_method=PUT" method="POST" class="d-inline">
-                    <select name="status" class="form-control form-control-sm status-select">
-                      <option value="Open" <%= ticket.status === 'Open' ? 'selected' : '' %>>Open</option>
-                      <option value="In Progress" <%= ticket.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
-                      <option value="Resolved" <%= ticket.status === 'Resolved' ? 'selected' : '' %>>Resolved</option>
-                      <option value="Closed" <%= ticket.status === 'Closed' ? 'selected' : '' %>>Closed</option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-success">Update</button>
+                  <form action="/admin/tickets/<%= ticket._id %>/status?_method=PUT" method="POST">
+                    <div class="d-flex align-items-center">
+                      <select name="status" class="form-control status-select">
+                        <option value="Open" <%= ticket.status === 'Open' ? 'selected' : '' %>>Open</option>
+                        <option value="In Progress" <%= ticket.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                        <option value="Resolved" <%= ticket.status === 'Resolved' ? 'selected' : '' %>>Resolved</option>
+                        <option value="Closed" <%= ticket.status === 'Closed' ? 'selected' : '' %>>Closed</option>
+                      </select>
+                      <button type="submit" class="btn btn-success">Update</button>
+                    </div>
                   </form>
                 <% } %>
               </div>
@@ -85,6 +87,12 @@
   </div>
 </div>
 
+<!-- Hidden user data for Socket.IO -->
+<div id="user-data" data-user="<%= JSON.stringify({ id: user.id, name: user.name, role: user.role }) %>" style="display: none;"></div>
+
+<!-- Socket.IO client library -->
+<script src="/socket.io/socket.io.js"></script>
+
 <script>
   // Filter tickets by status
   document.getElementById('ticketFilter').addEventListener('change', function() {
@@ -98,6 +106,62 @@
         ticket.style.display = 'none';
       }
     });
+  });
+
+  // Use the global socket connection for dashboard-specific functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.appSocket) {
+      const socket = window.appSocket;
+      
+      // Listen for status updates
+      socket.on('status-update', data => {
+        updateTicketStatusInList(data);
+      });
+    }
+    
+    // Function to update ticket status in the list
+    function updateTicketStatusInList(data) {
+      const ticketElement = document.querySelector(`.ticket[data-ticket-id="${data.ticketId}"]`);
+      if (ticketElement) {
+        // Update status data attribute
+        ticketElement.dataset.status = data.status;
+        
+        // Update status badge
+        const statusBadge = ticketElement.querySelector('.status');
+        if (statusBadge) {
+          // Remove old status classes
+          statusBadge.classList.forEach(className => {
+            if (className.startsWith('status-')) {
+              statusBadge.classList.remove(className);
+            }
+          });
+          
+          // Add new status class
+          const newStatusClass = `status-${data.status.toLowerCase().replace(/\s+/g, '-')}`;
+          statusBadge.classList.add(newStatusClass);
+          
+          // Update text
+          statusBadge.textContent = data.status;
+        }
+        
+        // Update status dropdown if admin
+        const statusSelect = ticketElement.querySelector('select[name="status"]');
+        if (statusSelect) {
+          statusSelect.value = data.status;
+        }
+        
+        // Show notification
+        showNotification(`Ticket status updated to ${data.status} by ${data.updatedBy}`);
+        
+        // Reapply filter if necessary
+        const currentFilter = document.getElementById('ticketFilter').value;
+        if (currentFilter !== 'all' && currentFilter !== data.status) {
+          ticketElement.style.display = 'none';
+        } else {
+          ticketElement.style.display = 'flex';
+        }
+      }
+    }
   });
 </script>
 

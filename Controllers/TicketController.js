@@ -59,7 +59,8 @@ class TicketController {
       res.render('tickets/view', {
         ticket,
         comments,
-        isAdmin: req.user.role === 'admin'
+        isAdmin: req.user.role === 'admin',
+        currentUser: req.user
       });
     } catch (err) {
       console.error(err);
@@ -121,6 +122,18 @@ class TicketController {
       
       await ticket.save();
       
+      // Emit socket event for real-time ticket update
+      const io = req.app.get('io');
+      io.to(`ticket-${ticket._id}`).emit('ticket-update', {
+        ticketId: ticket._id,
+        title: ticket.title,
+        description: ticket.description,
+        category: ticket.category,
+        priority: ticket.priority,
+        updatedBy: req.user.name,
+        timestamp: new Date()
+      });
+      
       req.flash('success_msg', 'Ticket updated successfully');
       res.redirect(`/tickets/${ticket._id}`);
     } catch (err) {
@@ -170,12 +183,18 @@ class TicketController {
       
       // Check if ticket exists
       if (!ticket) {
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+          return res.status(404).json({ error: 'Ticket not found' });
+        }
         req.flash('error_msg', 'Ticket not found');
         return res.redirect('/dashboard');
       }
       
       // Check if user has permission to comment on this ticket
       if (req.user.role !== 'admin' && ticket.user.toString() !== req.user.id) {
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+          return res.status(403).json({ error: 'Not authorized' });
+        }
         req.flash('error_msg', 'Not authorized');
         return res.redirect('/dashboard');
       }
@@ -193,10 +212,45 @@ class TicketController {
       ticket.updatedAt = Date.now();
       await ticket.save();
       
+      // Get the populated comment for emitting
+      const populatedComment = await Comment.findById(newComment._id)
+                                        .populate('user', 'name role');
+
+      // Emit socket event for real-time comment update
+      const io = req.app.get('io');
+      io.to(`ticket-${ticket._id}`).emit('new-comment', {
+        ticketId: ticket._id,
+        comment: {
+          _id: populatedComment._id,
+          text: populatedComment.text,
+          user: {
+            name: populatedComment.user.name,
+            role: populatedComment.user.role
+          },
+          createdAt: populatedComment.createdAt
+        }
+      });
+      
+      // If it's an AJAX request, send JSON response
+      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        return res.status(200).json({ 
+          success: true, 
+          message: 'Comment added successfully' 
+        });
+      }
+      
+      // For traditional form submission (fallback)
       req.flash('success_msg', 'Comment added');
       res.redirect(`/tickets/${req.params.id}`);
     } catch (err) {
       console.error(err);
+      
+      // If it's an AJAX request, send JSON error
+      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+        return res.status(500).json({ error: 'Error adding comment' });
+      }
+      
+      // For traditional form submission (fallback)
       req.flash('error_msg', 'Error adding comment');
       res.redirect(`/tickets/${req.params.id}`);
     }

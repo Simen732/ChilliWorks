@@ -11,14 +11,14 @@
           </span>
         </div>
         
-        <div class="card-body">
+        <div class="card-body" id="ticket-container" data-ticket-id="<%= ticket._id %>">
           <div class="ticket-meta mb-4">
             <div class="row">
               <div class="col-md-3">
-                <strong>Category:</strong> <%= ticket.category %>
+                <strong>Category:</strong> <span><%= ticket.category %></span>
               </div>
               <div class="col-md-3">
-                <strong>Priority:</strong> <%= ticket.priority %>
+                <strong>Priority:</strong> <span><%= ticket.priority %></span>
               </div>
               <div class="col-md-3">
                 <strong>Created:</strong> <%= new Date(ticket.createdAt).toLocaleDateString() %>
@@ -92,10 +92,11 @@
             <!-- Add Comment Form -->
             <div class="add-comment mt-4">
               <h5>Add Comment</h5>
-              <form action="/tickets/<%= ticket._id %>/comments" method="POST">
+              <form id="comment-form">
                 <div class="form-group">
                   <textarea
                     name="text"
+                    id="comment-text"
                     class="form-control"
                     rows="3"
                     placeholder="Write your comment here"
@@ -134,5 +135,56 @@
     </div>
   </div>
 </div>
+
+<!-- Hidden user data for Socket.IO -->
+<div id="user-data" data-user="<%= JSON.stringify({ id: user.id, name: user.name, role: user.role }) %>" style="display: none;"></div>
+
+<!-- Socket.IO client library -->
+<script src="/socket.io/socket.io.js"></script>
+<!-- Custom Socket.IO integration -->
+<script src="/js/socket.js"></script>
+
+<script>
+  // Use the global socket connection for ticket-specific functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const ticketContainer = document.getElementById('ticket-container');
+    if (!ticketContainer || !window.appSocket) return;
+    
+    const ticketId = ticketContainer.dataset.ticketId;
+    const socket = window.appSocket;
+    
+    // Join the ticket room
+    socket.emit('join-ticket', ticketId);
+    
+    // Listen for status updates
+    socket.on('status-update', data => {
+      if (data.ticketId === ticketId) {
+        updateTicketStatus(data);
+      }
+    });
+    
+    // Listen for new comments
+    socket.on('new-comment', data => {
+      if (data.ticketId === ticketId) {
+        addNewComment(data.comment);
+      }
+    });
+    
+    // Listen for ticket updates
+    socket.on('ticket-update', data => {
+      if (data.ticketId === ticketId) {
+        updateTicketDetails(data);
+      }
+    });
+    
+    // When leaving the page, leave the ticket room
+    window.addEventListener('beforeunload', () => {
+      socket.emit('leave-ticket', ticketId);
+    });
+    
+    // Function implementations for updateTicketStatus, addNewComment, updateTicketDetails
+    // (These functions are already defined in your socket.js file)
+  });
+</script>
 
 <%- include('../partials/footer') %>

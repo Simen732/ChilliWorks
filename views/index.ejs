@@ -1,40 +1,40 @@
 <%- include('./partials/header') %>
 
 <div class="container">
-  <div class="jumbotron text-center mt-5">
-    <h1 class="display-4">Welcome to the Help Desk</h1>
-    <p class="lead">A simple ticketing system for managing support requests</p>
-    <hr class="my-4">
-    <p>Get started by creating an account or logging in</p>
+  <div class="jumbotron text-center mt-5" style="background: linear-gradient(135deg, rgba(40, 49, 65, 0.9), rgba(45, 55, 72, 0.9)); border: 1px solid var(--primary-color); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(74, 111, 165, 0.2); padding: 3rem;">
+    <h1 class="display-4" style="color: white; text-shadow: 0 0 10px rgba(74, 111, 165, 0.3);">Welcome to the Help Desk</h1>
+    <p class="lead" style="color: rgba(233, 236, 239, 0.9);">A modern ticketing system for managing support requests</p>
+    <hr class="my-4" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); height: 2px; border: none; opacity: 0.5;">
+    <p style="color: rgba(233, 236, 239, 0.8);">Get started by creating an account or logging in</p>
     <div class="mt-4">
-      <a href="/auth/login" class="btn btn-primary btn-lg mr-3">Login</a>
-      <a href="/auth/register" class="btn btn-secondary btn-lg">Register</a>
+      <a href="/auth/login" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Login</a>
+      <a href="/auth/register" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Register</a>
     </div>
   </div>
   
   <div class="row mt-5">
     <div class="col-md-4">
-      <div class="card mb-4">
+      <div class="card mb-4" style="transform: translateY(0); transition: transform 0.3s ease, box-shadow 0.3s ease;">
         <div class="card-body text-center">
-          <i class="fas fa-ticket-alt fa-4x mb-3"></i>
+          <i class="fas fa-ticket-alt fa-4x mb-3" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
           <h3>Create Tickets</h3>
           <p>Submit support requests with details about your issue</p>
         </div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card mb-4">
+      <div class="card mb-4" style="transform: translateY(0); transition: transform 0.3s ease, box-shadow 0.3s ease;">
         <div class="card-body text-center">
-          <i class="fas fa-comments fa-4x mb-3"></i>
+          <i class="fas fa-comments fa-4x mb-3" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
           <h3>Track Progress</h3>
           <p>Follow the status of your tickets and communicate with support staff</p>
         </div>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card mb-4">
+      <div class="card mb-4" style="transform: translateY(0); transition: transform 0.3s ease, box-shadow 0.3s ease;">
         <div class="card-body text-center">
-          <i class="fas fa-check-circle fa-4x mb-3"></i>
+          <i class="fas fa-check-circle fa-4x mb-3" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
           <h3>Get Solutions</h3>
           <p>Receive timely resolutions to your technical problems</p>
         </div>
@@ -42,5 +42,22 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Add hover effect to cards
+  document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px)';
+        this.style.boxShadow = '0 15px 30px rgba(0, 0, 0, 0.3), 0 0 15px rgba(52, 152, 219, 0.3)';
+      });
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      });
+    });
+  });
+</script>
 
 <%- include('./partials/footer') %>

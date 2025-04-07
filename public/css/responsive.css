@@ -30,6 +30,20 @@
     margin-right: 0;
     margin-bottom: 0.5rem;
   }
+
+  /* Futuristic design adjustments for mobile */
+  .card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .card-header h3 {
+    font-size: 1.4rem;
+  }
+  
+  .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
 }
 
 /* Extra small devices (portrait phones) */
@@ -50,5 +64,19 @@
   .meta {
     flex-direction: column;
     gap: 0.25rem;
+  }
+  
+  /* Futuristic design adjustments for small mobile */
+  .status {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+  
+  .card-header {
+    padding: 0.8rem 1rem;
+  }
+  
+  .stat-card h3 {
+    font-size: 2rem;
   }
 }

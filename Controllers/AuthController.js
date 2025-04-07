@@ -1,5 +1,5 @@
-const passport = require('passport');
-const bcrypt = require('bcryptjs');
+const argon2 = require('argon2');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 class AuthController {
@@ -59,9 +59,13 @@ class AuthController {
             password
           });
 
-          // Hash password
-          const salt = await bcrypt.genSalt(10);
-          newUser.password = await bcrypt.hash(password, salt);
+          // Hash password with argon2
+          newUser.password = await argon2.hash(password, {
+            type: argon2.argon2id, // Use argon2id variant (recommended)
+            memoryCost: 2**16,     // 64 MiB memory usage
+            timeCost: 3,           // 3 iterations
+            parallelism: 1         // 1 degree of parallelism
+          });
           
           // Save user
           await newUser.save();
@@ -77,18 +81,67 @@ class AuthController {
     }
   }
 
-  // Handle login
-  postLogin(req, res, next) {
-    passport.authenticate('local', {
-      successRedirect: '/dashboard',
-      failureRedirect: '/auth/login',
-      failureFlash: true
-    })(req, res, next);
+  // Handle login with JWT
+  async postLogin(req, res) {
+    try {
+      const { email, password } = req.body;
+      
+      // Find user by email
+      const user = await User.findOne({ email });
+      
+      if (!user) {
+        req.flash('error_msg', 'Invalid email or password');
+        return res.redirect('/auth/login');
+      }
+      
+      // Verify password with argon2
+      const isMatch = await argon2.verify(user.password, password);
+      
+      if (!isMatch) {
+        req.flash('error_msg', 'Invalid email or password');
+        return res.redirect('/auth/login');
+      }
+      
+      // Create JWT payload
+      const payload = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      };
+      
+      // Sign token
+      const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET || process.env.SESSION_SECRET,
+        { expiresIn: '12h' }
+      );
+      
+      // Set secure httpOnly JWT cookie for authentication
+      res.cookie('token', token, {
+        httpOnly: true,
+        maxAge: 12 * 60 * 60 * 1000 // 12 hours
+      });
+
+      // Set a non-httpOnly cookie for Socket.IO auth
+      res.cookie('socket_token', token, {
+        httpOnly: false, // JavaScript can read this
+        maxAge: 12 * 60 * 60 * 1000 // 12 hours
+      });
+      
+      // Redirect to dashboard
+      res.redirect('/dashboard');
+    } catch (err) {
+      console.error(err);
+      req.flash('error_msg', 'Error during login');
+      res.redirect('/auth/login');
+    }
   }
 
-  // Handle logout
+  // Handle logout - clear JWT cookie
   logout(req, res) {
-    req.logout();
+    res.clearCookie('token');
+    res.clearCookie('socket_token');
     req.flash('success_msg', 'You are logged out');
     res.redirect('/auth/login');
   }

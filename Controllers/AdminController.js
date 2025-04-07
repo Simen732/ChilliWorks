@@ -96,12 +96,22 @@ class AdminController {
           ...(status === 'In Progress' && { assignedTo: req.user.id })
         },
         { new: true }
-      );
+      ).populate('user', 'name email')
+       .populate('assignedTo', 'name email');
       
       if (!ticket) {
         req.flash('error_msg', 'Ticket not found');
         return res.redirect('/dashboard');
       }
+      
+      // Emit socket event for real-time status update
+      const io = req.app.get('io');
+      io.to(`ticket-${ticket._id}`).emit('status-update', {
+        ticketId: ticket._id,
+        status: ticket.status,
+        updatedBy: req.user.name,
+        timestamp: new Date()
+      });
       
       req.flash('success_msg', `Ticket status updated to ${status}`);
       res.redirect(`/tickets/${req.params.id}`);

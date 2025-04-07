@@ -1,0 +1,55 @@
+<%- include('./partials/header') %>
+
+<div class="container">
+  <div class="jumbotron text-center mt-5">
+    <h1>Welcome to the Help Desk</h1>
+    <p class="lead">Get help with your technical issues</p>
+    <div class="mt-4">
+      <% if (user) { %>
+        <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+        <a href="/tickets/create" class="btn btn-secondary">Create Ticket</a>
+      <% } else { %>
+        <a href="/auth/login" class="btn btn-primary">Login</a>
+        <a href="/auth/register" class="btn btn-secondary">Register</a>
+      <% } %>
+    </div>
+  </div>
+  
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">Quick Support</div>
+        <div class="card-body">
+          <p>Create a support ticket and get help from our team of experts.</p>
+          <% if (user) { %>
+            <a href="/tickets/create" class="btn btn-primary btn-block">Submit a Ticket</a>
+          <% } else { %>
+            <a href="/auth/login" class="btn btn-primary btn-block">Login to Submit</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">Knowledge Base</div>
+        <div class="card-body">
+          <p>Browse our knowledge base for answers to common questions and issues.</p>
+          <a href="#" class="btn btn-secondary btn-block">View Articles</a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">Contact Us</div>
+        <div class="card-body">
+          <p>Have questions about our services? Contact our support team directly.</p>
+          <a href="#" class="btn btn-secondary btn-block">Contact Support</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./partials/footer') %>

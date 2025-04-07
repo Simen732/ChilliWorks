@@ -1,0 +1,47 @@
+<%- include('../partials/header') %>
+
+<div class="container">
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <p class="lead">Welcome to the admin control panel</p>
+  </div>
+
+  <div class="stats-grid mb-5">
+    <div class="stat-card">
+      <h3><%= openTickets %></h3>
+      <p>Open Tickets</p>
+    </div>
+    <div class="stat-card">
+      <h3><%= inProgressTickets %></h3>
+      <p>In Progress</p>
+    </div>
+    <div class="stat-card">
+      <h3><%= resolvedTickets %></h3>
+      <p>Resolved</p>
+    </div>
+    <div class="stat-card">
+      <h3><%= userCount %></h3>
+      <p>Total Users</p>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <a href="/admin/users" class="btn btn-primary">
+        <i class="fas fa-users"></i> Manage Users
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>Recent Activity</h3>
+    </div>
+    <div class="card-body">
+      <p class="text-muted">Recent system activities will appear here.</p>
+      <!-- Placeholder for future activity log implementation -->
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

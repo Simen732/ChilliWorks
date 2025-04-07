@@ -1,0 +1,46 @@
+<%- include('./partials/header') %>
+
+<div class="container">
+  <div class="jumbotron text-center mt-5">
+    <h1 class="display-4">Welcome to the Help Desk</h1>
+    <p class="lead">A simple ticketing system for managing support requests</p>
+    <hr class="my-4">
+    <p>Get started by creating an account or logging in</p>
+    <div class="mt-4">
+      <a href="/auth/login" class="btn btn-primary btn-lg mr-3">Login</a>
+      <a href="/auth/register" class="btn btn-secondary btn-lg">Register</a>
+    </div>
+  </div>
+  
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <i class="fas fa-ticket-alt fa-4x mb-3"></i>
+          <h3>Create Tickets</h3>
+          <p>Submit support requests with details about your issue</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <i class="fas fa-comments fa-4x mb-3"></i>
+          <h3>Track Progress</h3>
+          <p>Follow the status of your tickets and communicate with support staff</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <i class="fas fa-check-circle fa-4x mb-3"></i>
+          <h3>Get Solutions</h3>
+          <p>Receive timely resolutions to your technical problems</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('./partials/footer') %>

@@ -1,0 +1,70 @@
+<%- include('../partials/header') %>
+
+<div class="container">
+  <div class="admin-header">
+    <h1>User Management</h1>
+    <p class="lead">Manage user accounts and permissions</p>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <a href="/admin/dashboard" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Admin Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>User Accounts</h3>
+    </div>
+    <div class="card-body">
+      <% if (users.length > 0) { %>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Date Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% users.forEach(user => { %>
+                <tr>
+                  <td><%= user.name %></td>
+                  <td><%= user.email %></td>
+                  <td>
+                    <span class="badge <%= user.role === 'admin' ? 'badge-primary' : 'badge-secondary' %>">
+                      <%= user.role %>
+                    </span>
+                  </td>
+                  <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                  <td>
+                    <% if (user.role === 'admin' && user._id.toString() !== currentUser.id) { %>
+                      <form action="/admin/users/<%= user._id %>/demote?_method=PUT" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-warning">Demote to User</button>
+                      </form>
+                    <% } else if (user.role === 'user') { %>
+                      <form action="/admin/users/<%= user._id %>/promote?_method=PUT" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-primary">Promote to Admin</button>
+                      </form>
+                    <% } else if (user._id.toString() === currentUser.id) { %>
+                      <span class="text-muted">Current User</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <p class="text-muted">No users found in the system.</p>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

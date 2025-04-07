@@ -1,0 +1,193 @@
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+  --light-color: #f8f9fa;
+  --dark-color: #343a40;
+  --border-color: #dee2e6;
+}
+
+/* Dashboard */
+.dashboard-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.admin-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Ticket List */
+.ticket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ticket {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  background-color: white;
+}
+
+.ticket:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-info {
+  flex: 1;
+}
+
+.ticket-info h4 {
+  margin-bottom: 0.5rem;
+}
+
+.ticket-info h4 a {
+  color: var(--dark-color);
+  text-decoration: none;
+}
+
+.ticket-info h4 a:hover {
+  color: var(--primary-color);
+}
+
+.meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-open {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.status-in-progress {
+  background-color: var(--warning-color);
+  color: var(--dark-color);
+}
+
+.status-resolved {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.status-closed {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.category, .priority {
+  font-size: 0.9rem;
+  color: var(--secondary-color);
+}
+
+.dates {
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+  margin-top: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.status-select {
+  width: auto;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+/* Comment Section */
+.comments-section {
+  border-top: 1px solid var(--border-color);
+  padding-top: 2rem;
+}
+
+.comments-list {
+  margin: 1.5rem 0;
+}
+
+.comment {
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+  background-color: #f9f9f9;
+}
+
+.comment:last-child {
+  margin-bottom: 0;
+}
+
+.comment .meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.comment .text {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+/* Admin Statistics */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.stat-card h3 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.stat-card p {
+  margin-bottom: 0;
+  color: var(--secondary-color);
+  font-weight: 500;
+}
+
+/* Utilities */
+.no-tickets {
+  text-align: center;
+  padding: 2rem;
+}

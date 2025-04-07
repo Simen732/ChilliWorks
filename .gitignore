@@ -57,3 +57,12 @@ Thumbs.db
 .tmp/
 tmp/
 temp/
+
+git add -f app.js
+git add -f controllers/
+git add -f models/
+git add -f routes/
+git add -f views/
+git add -f public/
+git add -f config/
+git add package.json

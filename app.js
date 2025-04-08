@@ -96,15 +96,7 @@ io.on('connection', (socket) => {
 app.set('io', io);
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/helpdesk', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-  autoIndex: process.env.NODE_ENV !== 'production', // Disable auto indexing in production
-  ssl: process.env.NODE_ENV === 'production', // Enable SSL in production
-  sslValidate: process.env.NODE_ENV === 'production'
-})
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/helpdesk')
 .then(() => console.log('MongoDB Connected'))
 .catch(err => console.log('MongoDB Connection Error:', err));
 

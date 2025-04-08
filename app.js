@@ -24,17 +24,21 @@ dotenv.config();
 // Initialize app
 const app = express();
 
-// Replace http server creation with:
+// Replace the server creation code (around line 28-36) with this:
 let server;
-if (process.env.NODE_ENV === 'production') {
-  // Use HTTPS in production
+
+// Check if we're in production and if cert files exist
+if (process.env.NODE_ENV === 'production' && fs.existsSync('/home/jackal/ChilliWorks/certs/key.pem') && fs.existsSync('/home/jackal/ChilliWorks/certs/cert.pem')) {
+  // Use HTTPS in production if cert files exist
   const privateKey = fs.readFileSync('/home/jackal/ChilliWorks/certs/key.pem', 'utf8');
   const certificate = fs.readFileSync('/home/jackal/ChilliWorks/certs/cert.pem', 'utf8');
   const credentials = { key: privateKey, cert: certificate };
   server = https.createServer(credentials, app);
+  console.log('Starting server in HTTPS mode');
 } else {
-  // Use HTTP in development
+  // Use HTTP
   server = http.createServer(app);
+  console.log('Starting server in HTTP mode');
 }
 
 const io = socketIo(server, {

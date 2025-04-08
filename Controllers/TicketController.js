@@ -1,5 +1,6 @@
 const Ticket = require('../models/Ticket');
 const Comment = require('../models/Comment');
+const activityService = require('../services/ActivityService');
 
 class TicketController {
   // Render create ticket page
@@ -22,6 +23,13 @@ class TicketController {
       });
       
       await newTicket.save();
+      
+      await activityService.logActivity(
+        'created a new ticket',
+        'ticket',
+        newTicket._id,  // This should be entityId (ticket ID)
+        req.user.id     // This should be userId
+      );
       
       req.flash('success_msg', 'Ticket created successfully');
       res.redirect('/dashboard');
@@ -97,49 +105,45 @@ class TicketController {
   // Update ticket
   async updateTicket(req, res) {
     try {
-      const { title, description, category, priority } = req.body;
+      const ticketId = req.params.id;
+      let { status, assignedTo, priority, notes } = req.body;
       
-      const ticket = await Ticket.findById(req.params.id);
+      // Ensure status is not null - default to 'Open' if missing
+      if (!status) {
+        status = 'Open';
+      }
       
-      // Check if ticket exists
+      const ticket = await Ticket.findByIdAndUpdate(ticketId, {
+        status,
+        assignedTo,
+        priority,
+        notes
+      }, { new: true });
+      
       if (!ticket) {
         req.flash('error_msg', 'Ticket not found');
         return res.redirect('/dashboard');
       }
       
-      // Check if user has permission to edit this ticket
-      if (req.user.role !== 'admin' && ticket.user.toString() !== req.user.id) {
-        req.flash('error_msg', 'Not authorized');
-        return res.redirect('/dashboard');
-      }
+      // Log admin activity with correct parameter order
+      let actionDescription = `updated ticket #${ticketId}`;
+      if (status) actionDescription += ` - changed status to ${status}`;
+      if (assignedTo) actionDescription += ` - assigned to user ${assignedTo}`;
       
-      // Update ticket
-      ticket.title = title;
-      ticket.description = description;
-      ticket.category = category;
-      ticket.priority = priority;
-      ticket.updatedAt = Date.now();
-      
-      await ticket.save();
-      
-      // Emit socket event for real-time ticket update
-      const io = req.app.get('io');
-      io.to(`ticket-${ticket._id}`).emit('ticket-update', {
-        ticketId: ticket._id,
-        title: ticket.title,
-        description: ticket.description,
-        category: ticket.category,
-        priority: ticket.priority,
-        updatedBy: req.user.name,
-        timestamp: new Date()
-      });
+      await activityService.logActivity(
+        actionDescription,
+        'ticket',
+        ticketId,
+        req.user.id
+      );
       
       req.flash('success_msg', 'Ticket updated successfully');
-      res.redirect(`/tickets/${ticket._id}`);
-    } catch (err) {
-      console.error(err);
+      res.redirect(`/tickets/${ticketId}`);
+      
+    } catch (error) {
+      console.error(error);
       req.flash('error_msg', 'Error updating ticket');
-      res.redirect(`/tickets/${req.params.id}/edit`);
+      res.redirect('/dashboard');
     }
   }
 
@@ -207,6 +211,13 @@ class TicketController {
       });
       
       await newComment.save();
+      
+      await activityService.logActivity(
+        'added a comment to ticket ' + ticket.title,
+        'comment',
+        ticket._id,  // The entity ID should be the ticket ID
+        req.user.id  // The user ID
+      );
       
       // Update ticket's updatedAt field
       ticket.updatedAt = Date.now();

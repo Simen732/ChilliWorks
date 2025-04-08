@@ -5,11 +5,13 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const cookieParser = require('cookie-parser');
-const jwt = require('jsonwebtoken'); // Add this line
+const jwt = require('jsonwebtoken');
 const { verifyToken } = require('./middleware/auth');
 const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
+const { standardLimiter } = require('./middleware/rateLimiter');
+
 
 // Load env vars
 dotenv.config();
@@ -18,6 +20,9 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+
+// Apply rate limiting to all requests
+app.use(standardLimiter);
 
 // Socket.IO middleware to handle authentication
 io.use((socket, next) => {
@@ -61,7 +66,6 @@ io.on('connection', (socket) => {
 
   // Send a test message every 10 seconds
   setInterval(() => {
-    console.log('Sending test ping to connected clients');
     socket.emit('test-ping', { message: 'Server ping', timestamp: new Date() });
   }, 10000);
 });

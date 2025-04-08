@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Ticket = require('../models/Ticket');
+const activityService = require('../services/ActivityService');
 
 class AdminController {
   // Admin dashboard
@@ -11,11 +12,15 @@ class AdminController {
       const resolvedTickets = await Ticket.countDocuments({ status: 'Resolved' });
       const userCount = await User.countDocuments({ role: 'user' });
       
+      // Get recent activities
+      const recentActivities = await activityService.getRecentActivities(10);
+      
       res.render('admin/dashboard', {
         openTickets,
         inProgressTickets,
         resolvedTickets,
-        userCount
+        userCount,
+        recentActivities
       });
     } catch (err) {
       console.error(err);

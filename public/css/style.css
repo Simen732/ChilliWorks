@@ -641,3 +641,70 @@ footer {
 .text-muted {
   color: rgba(233, 236, 239, 0.6) !important;
 }
+
+/* Activity List Styling */
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activity-item {
+  display: flex;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(74, 111, 165, 0.2);
+  transition: all 0.3s ease;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-item:hover {
+  background-color: rgba(74, 111, 165, 0.05);
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--info-color) 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+}
+
+.activity-content {
+  flex: 1;
+}
+
+.activity-user {
+  margin-bottom: 5px;
+  color: var(--text-light);
+}
+
+.activity-action {
+  color: rgba(233, 236, 239, 0.8);
+}
+
+.activity-details {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  color: rgba(233, 236, 239, 0.7);
+}
+
+.activity-details a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.activity-details a:hover {
+  text-decoration: underline;
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  color: rgba(233, 236, 239, 0.6);
+}

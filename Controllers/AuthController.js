@@ -1,6 +1,10 @@
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const authService = require('../services/AuthService');
+const activityService = require('../services/ActivityService');
 
 class AuthController {
   // Render login page
@@ -70,6 +74,12 @@ class AuthController {
           // Save user
           await newUser.save();
           
+          await activityService.logActivity(
+            'registered a new account',
+            'user',
+            newUser._id
+          );
+
           req.flash('success_msg', 'You are now registered and can log in');
           res.redirect('/auth/login');
         }
@@ -129,6 +139,12 @@ class AuthController {
         maxAge: 12 * 60 * 60 * 1000 // 12 hours
       });
       
+      await activityService.logActivity(
+        'logged in',
+        'user',
+        user._id
+      );
+
       // Redirect to dashboard
       res.redirect('/dashboard');
     } catch (err) {
@@ -144,6 +160,106 @@ class AuthController {
     res.clearCookie('socket_token');
     req.flash('success_msg', 'You are logged out');
     res.redirect('/auth/login');
+  }
+
+  // Render forgot password page
+  getForgotPassword(req, res) {
+    res.render('auth/forgot-password', {
+      error: null,
+      success: null
+    });
+  }
+
+  // Handle forgot password submission
+  async postForgotPassword(req, res) {
+    try {
+      const { email } = req.body;
+      
+      if (!email) {
+        req.flash('error_msg', 'Please enter your email address');
+        return res.redirect('/auth/forgot-password');
+      }
+      
+      const result = await authService.forgotPassword(email);
+      
+      // Always show the same message whether the email exists or not
+      // This prevents user enumeration attacks
+      req.flash('success_msg', 'If an account exists with that email, a password reset link has been sent. Check the server console for the preview URL.');
+      return res.redirect('/auth/login');
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      req.flash('error_msg', 'An error occurred. Please try again later.');
+      return res.redirect('/auth/forgot-password');
+    }
+  }
+
+  // Render reset password page
+  async getResetPassword(req, res) {
+    try {
+      const { token } = req.params;
+      
+      const validation = await authService.validateResetToken(token);
+      
+      if (!validation.success) {
+        req.flash('error_msg', validation.message);
+        return res.redirect('/auth/forgot-password');
+      }
+      
+      res.render('auth/reset-password', { token });
+    } catch (error) {
+      console.error('Get reset password error:', error);
+      req.flash('error_msg', 'An error occurred. Please try again later.');
+      res.redirect('/auth/forgot-password');
+    }
+  }
+
+  // Handle password reset
+  async postResetPassword(req, res) {
+    try {
+      const { password, password2 } = req.body;
+      const { token } = req.params;
+      let errors = [];
+      
+      // Validate passwords
+      if (!password || !password2) {
+        errors.push({ msg: 'Please fill in all fields' });
+      }
+      
+      if (password !== password2) {
+        errors.push({ msg: 'Passwords do not match' });
+      }
+      
+      if (password.length < 6) {
+        errors.push({ msg: 'Password should be at least 6 characters' });
+      }
+      
+      if (errors.length > 0) {
+        return res.render('auth/reset-password', {
+          errors,
+          token
+        });
+      }
+      
+      const result = await authService.resetPassword(token, password);
+      
+      if (result.success) {
+        await activityService.logActivity(
+          'reset their password',
+          'user',
+          user._id
+        );
+
+        req.flash('success_msg', 'Your password has been updated! You can now login with your new password');
+        return res.redirect('/auth/login');
+      } else {
+        req.flash('error_msg', result.message);
+        return res.redirect('/auth/forgot-password');
+      }
+    } catch (error) {
+      console.error('Password reset error:', error);
+      req.flash('error_msg', 'An error occurred while resetting password');
+      res.redirect('/auth/forgot-password');
+    }
   }
 }
 

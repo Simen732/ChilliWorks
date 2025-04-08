@@ -72,7 +72,7 @@
       </div>
     <% } %>
     
-    <% if(typeof error !== 'undefined' && error.length > 0) { %>
+    <% if(typeof error !== 'undefined' && error !== null && error.length > 0) { %>
       <div class="alert alert-danger alert-dismissible fade show">
         <%= error %>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">

@@ -6,8 +6,8 @@
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h3><%= ticket.title %></h3>
-          <span class="status status-<%= ticket.status.toLowerCase().replace(/\s+/g, '-') %>">
-            <%= ticket.status %>
+          <span class="status status-<%= ticket.status ? ticket.status.toLowerCase().replace(/\s+/g, '-') : 'unknown' %>">
+            <%= ticket.status || 'Unknown' %>
           </span>
         </div>
         

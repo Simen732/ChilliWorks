@@ -38,8 +38,41 @@
       <h3>Recent Activity</h3>
     </div>
     <div class="card-body">
-      <p class="text-muted">Recent system activities will appear here.</p>
-      <!-- Placeholder for future activity log implementation -->
+      <% if (recentActivities && recentActivities.length > 0) { %>
+        <ul class="activity-list">
+          <% recentActivities.forEach(activity => { %>
+            <li class="activity-item">
+              <div class="activity-icon">
+                <% if (activity.category === 'ticket') { %>
+                  <i class="fas fa-ticket-alt"></i>
+                <% } else if (activity.category === 'user') { %>
+                  <i class="fas fa-user"></i>
+                <% } else if (activity.category === 'comment') { %>
+                  <i class="fas fa-comment"></i>
+                <% } else { %>
+                  <i class="fas fa-cog"></i>
+                <% } %>
+              </div>
+              <div class="activity-content">
+                <div class="activity-user">
+                  <strong><%= activity.user ? activity.user.name : 'System' %></strong> 
+                  <span class="activity-action"><%= activity.action %></span>
+                </div>
+                <% if (activity.ticket) { %>
+                  <div class="activity-details">
+                    Ticket: <a href="/tickets/<%= activity.ticket._id %>"><%= activity.ticket.title %></a>
+                  </div>
+                <% } %>
+                <div class="activity-time">
+                  <%= new Date(activity.createdAt).toLocaleString() %>
+                </div>
+              </div>
+            </li>
+          <% }); %>
+        </ul>
+      <% } else { %>
+        <p class="text-muted">No recent activities found.</p>
+      <% } %>
     </div>
   </div>
 </div>

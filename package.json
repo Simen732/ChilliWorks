@@ -5,23 +5,30 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "security-check": "npm audit"
   },
   "dependencies": {
     "argon2": "^0.41.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.7",
     "crypto": "^1.0.1",
+    "csurf": "^1.10.0",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^7.5.0",
     "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "isbot": "^5.1.25",
     "jsonwebtoken": "^9.0.2",
     "method-override": "^3.0.0",
     "mongoose": "^5.13.23",
     "nodemailer": "^6.10.0",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"

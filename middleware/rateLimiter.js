@@ -1,11 +1,12 @@
 const rateLimit = require('express-rate-limit');
 
-// Basic limiter for general use
+// Standard limiter without bot detection
 const standardLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: 100, // Standard limit for all users
   standardHeaders: true,
   message: 'Too many requests, please try again later.',
+  skip: (req, res) => req.ip === '127.0.0.1', // Optional: skip for localhost
 });
 
 // Stricter limiter for auth endpoints

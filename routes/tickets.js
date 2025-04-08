@@ -3,12 +3,13 @@ const router = express.Router();
 const { ensureAuthenticated } = require('../middleware/auth');
 const TicketController = require('../controllers/TicketController');
 const { ticketLimiter } = require('../middleware/rateLimiter');
+const { ticketValidation, handleValidationErrors } = require('../middleware/validate');
 
 // Create ticket page
 router.get('/create', ensureAuthenticated, TicketController.getCreateTicket);
 
-// Submit new ticket - add rate limiter
-router.post('/', ensureAuthenticated, ticketLimiter, TicketController.createTicket);
+// Submit new ticket - add rate limiter and validation
+router.post('/', ensureAuthenticated, ticketLimiter, ticketValidation, handleValidationErrors, TicketController.createTicket);
 
 // View single ticket
 router.get('/:id', ensureAuthenticated, TicketController.getTicket);

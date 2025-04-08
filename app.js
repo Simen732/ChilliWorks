@@ -11,7 +11,9 @@ const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
 const { standardLimiter } = require('./middleware/rateLimiter');
-
+const helmet = require('helmet'); // Add this line
+const csrf = require('csurf'); // Add after the existing requires
+const mongoSanitize = require('express-mongo-sanitize');
 
 // Load env vars
 dotenv.config();
@@ -21,6 +23,22 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+// Apply Helmet (before other middleware)
+app.use(helmet()); // Add this line
+
+// Add CSP specifically configured for your app with Socket.IO support
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "https://code.jquery.com", "https://cdn.jsdelivr.net", "https://stackpath.bootstrapcdn.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'"],
+    styleSrc: ["'self'", "https://stackpath.bootstrapcdn.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'"],
+    imgSrc: ["'self'", "data:"],
+    connectSrc: ["'self'", "wss:"],
+    fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+    objectSrc: ["'none'"],
+    upgradeInsecureRequests: []
+  }
+}));
 
 app.use(standardLimiter);
 
@@ -77,7 +95,11 @@ app.set('io', io);
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/helpdesk', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  useFindAndModify: false
+  useFindAndModify: false,
+  useCreateIndex: true,
+  autoIndex: process.env.NODE_ENV !== 'production', // Disable auto indexing in production
+  ssl: process.env.NODE_ENV === 'production', // Enable SSL in production
+  sslValidate: process.env.NODE_ENV === 'production'
 })
 .then(() => console.log('MongoDB Connected'))
 .catch(err => console.log('MongoDB Connection Error:', err));
@@ -89,6 +111,9 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Add after express json and urlencoded middleware
+app.use(mongoSanitize());
+
 // Cookie parser
 app.use(cookieParser());
 
@@ -98,7 +123,10 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    maxAge: 60 * 60 * 1000 // 1 hour - only used for flash messages, not authentication
+    maxAge: 60 * 60 * 1000, // 1 hour
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Enable in production
+    sameSite: 'strict'
   }
 }));
 
@@ -128,6 +156,14 @@ app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/tickets', require('./routes/tickets'));
 app.use('/admin', require('./routes/admin'));
+
+// CSRF Protection
+const csrfProtection = csrf({ cookie: true }); // Add after cookie-parser middleware
+
+// Add this to routes that use forms (after your routes are defined)
+app.use('/auth', csrfProtection, require('./routes/auth'));
+app.use('/tickets', csrfProtection, require('./routes/tickets'));
+app.use('/admin', csrfProtection, require('./routes/admin'));
 
 // Error handling middleware
 app.use((req, res) => {

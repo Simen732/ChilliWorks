@@ -14,6 +14,7 @@ const { standardLimiter } = require('./middleware/rateLimiter');
 const helmet = require('helmet'); // Add this line
 const csrf = require('csurf'); // Add after the existing requires
 const mongoSanitize = require('express-mongo-sanitize');
+const rateLimiter = require('./middleware/rateLimiter'); // Add this line near the top of the file with other imports
 
 // Load env vars
 dotenv.config();

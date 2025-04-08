@@ -708,3 +708,85 @@ footer {
   font-size: 0.8rem;
   color: rgba(233, 236, 239, 0.6);
 }
+
+/* Add these styles to override the problematic hover effect on organization cards */
+.organization-card:hover,
+.card:hover {
+  color: inherit !important; /* Maintain text color on hover */
+}
+
+.organization-card:hover a,
+.card:hover a {
+  color: #007bff !important; /* Keep links blue on hover */
+}
+
+/* If there's a dark overlay or background change on hover, adjust it to be more subtle */
+.organization-card:hover,
+.card:hover {
+  background-color: rgba(0, 123, 255, 0.05) !important; /* Light blue background instead */
+  box-shadow: 0 0 15px rgba(0, 0, 255, 0.1) !important; /* Subtle shadow effect */
+  transition: all 0.3s ease; /* Smooth transition */
+}
+
+/* Enhance the existing organization card hover styles to ensure text remains visible */
+.organization-card:hover *,
+.card:hover * {
+  color: inherit !important; /* Force all child elements to maintain their original color */
+}
+
+/* Specifically target text elements that might change color on hover */
+.card:hover h1, 
+.card:hover h2, 
+.card:hover h3, 
+.card:hover h4, 
+.card:hover h5, 
+.card:hover p, 
+.card:hover span, 
+.card:hover div,
+.card:hover td,
+.card:hover th {
+  color: var(--text-light) !important; /* Ensure text remains light colored */
+}
+
+/* Keep links properly styled */
+.card:hover a:not(.btn) {
+  color: #4a6fa5 !important; /* Use your theme's link color */
+}
+
+.card:hover a:not(.btn):hover {
+  color: #7d8cc4 !important; /* Lighter color on link hover */
+  text-decoration: underline;
+}
+
+/* Keep badges and status indicators properly colored */
+.card:hover .badge,
+.card:hover .status {
+  color: white !important; /* Ensure status badges remain readable */
+}
+
+/* Ensure organization card buttons maintain proper text color on hover */
+.card:hover .btn,
+.organization-card:hover .btn {
+  color: #fff !important; /* Keep button text white */
+}
+
+/* Maintain proper button styling on hover */
+.card:hover .btn-primary,
+.organization-card:hover .btn-primary {
+  background: linear-gradient(to right, #4a6fa5, #4a8f9e) !important;
+}
+
+.card:hover .btn-primary:hover,
+.organization-card:hover .btn-primary:hover {
+  background: linear-gradient(to right, #4a8f9e, #4a6fa5) !important;
+  box-shadow: 0 4px 12px rgba(55, 85, 128, 0.4) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Fix for "View" buttons specifically */
+.card:hover .btn-primary span,
+.organization-card:hover .btn-primary span,
+.card:hover .btn-primary:hover span,
+.organization-card:hover .btn-primary:hover span {
+  color: #fff !important; /* Ensure text inside button spans remains white */
+}

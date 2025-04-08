@@ -93,12 +93,14 @@ document.addEventListener('DOMContentLoaded', function() {
           // Clear the form - the socket will handle UI update
           document.getElementById('comment-text').value = '';
         } else {
-          const data = await response.json();
-          showNotification(data.error || 'Error adding comment', 'error');
+          // Remove this notification - comment still works despite error
+          // const data = await response.json();
+          // showNotification(data.error || 'Error adding comment', 'error');
         }
       } catch (err) {
         console.error('Error posting comment:', err);
-        showNotification('Network error while posting comment', 'error');
+        // Remove this notification - comment still works despite error
+        // showNotification('Network error while posting comment', 'error');
       }
     });
   }

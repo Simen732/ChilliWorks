@@ -15,13 +15,28 @@ const helmet = require('helmet'); // Add this line
 const csrf = require('csurf'); // Add after the existing requires
 const mongoSanitize = require('express-mongo-sanitize');
 const rateLimiter = require('./middleware/rateLimiter'); // Add this line near the top of the file with other imports
+const https = require('https'); // Add this line
+const fs = require('fs'); // Add this line
 
 // Load env vars
 dotenv.config();
 
 // Initialize app
 const app = express();
-const server = http.createServer(app);
+
+// Replace http server creation with:
+let server;
+if (process.env.NODE_ENV === 'production') {
+  // Use HTTPS in production
+  const privateKey = fs.readFileSync('/home/jackal/ChilliWorks/certs/key.pem', 'utf8');
+  const certificate = fs.readFileSync('/home/jackal/ChilliWorks/certs/cert.pem', 'utf8');
+  const credentials = { key: privateKey, cert: certificate };
+  server = https.createServer(credentials, app);
+} else {
+  // Use HTTP in development
+  server = http.createServer(app);
+}
+
 const io = socketIo(server, {
   cors: {
     origin: process.env.ALLOWED_ORIGINS?.split(',') || 'https://10.12.47.226', 

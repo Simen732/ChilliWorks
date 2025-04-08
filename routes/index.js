@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ensureAuthenticated } = require('../middleware/auth');
-const IndexController = require('../controllers/IndexController');
+const IndexController = require('../Controllers/IndexController');
 
 // Home page
 router.get('/', IndexController.getHomePage);

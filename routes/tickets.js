@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ensureAuthenticated } = require('../middleware/auth');
-const TicketController = require('../controllers/TicketController');
+const TicketController = require('../Controllers/TicketController');
 const { ticketLimiter } = require('../middleware/rateLimiter');
 const { ticketValidation, handleValidationErrors } = require('../middleware/validate');
 

@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { ensureAuthenticated, ensureAdmin } = require('../middleware/auth');
-const AdminController = require('../controllers/AdminController');
-const OrganizationController = require('../controllers/OrganizationController')
+const AdminController = require('../Controllers/AdminController');
+const OrganizationController = require('../Controllers/OrganizationController')
 // Admin dashboard
 router.get('/dashboard', [ensureAuthenticated, ensureAdmin], AdminController.getDashboard);
 

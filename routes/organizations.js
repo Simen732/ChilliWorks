@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const OrganizationController = require('../controllers/OrganizationController');
+const OrganizationController = require('../Controllers/OrganizationController');
 const { ensureAuthenticated } = require('../middleware/auth');
 
 // Fix method name to match what's in the controller

@@ -58,10 +58,10 @@ app.use(helmet.contentSecurityPolicy({
     scriptSrc: ["'self'", "https://code.jquery.com", "https://cdn.jsdelivr.net", "https://stackpath.bootstrapcdn.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'"],
     styleSrc: ["'self'", "https://stackpath.bootstrapcdn.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'"],
     imgSrc: ["'self'", "data:"],
-    connectSrc: ["'self'", "wss:"],
+    connectSrc: ["'self'", "wss:", "ws:"],
     fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
     objectSrc: ["'none'"],
-    upgradeInsecureRequests: []
+    upgradeInsecureRequests: null // Change from [] to null to disable
   }
 }));
 

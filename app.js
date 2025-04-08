@@ -21,7 +21,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Apply rate limiting to all requests
+
 app.use(standardLimiter);
 
 // Socket.IO middleware to handle authentication

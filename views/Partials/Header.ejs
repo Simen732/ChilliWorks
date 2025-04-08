@@ -82,11 +82,9 @@
     <% } %>
   </div>
   
-  <!-- Add hidden user data for Socket.IO if user is logged in -->
   <% if (user) { %>
     <div id="user-data" data-user="<%= JSON.stringify({ id: user.id, name: user.name, role: user.role }) %>" style="display: none;"></div>
     
-    <!-- Socket.IO client library and global connection script -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/global-socket.js"></script>
   <% } %>

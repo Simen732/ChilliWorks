@@ -7,6 +7,18 @@
       <span class="badge badge-primary">Admin</span>
     <% } %>
     <p class="lead">Welcome, <%= user.name %></p>
+    <% if (user.organization) { %>
+      <div class="organization-badge">
+        <span class="badge badge-success">
+          <i class="fas fa-building"></i> <%= user.organizationData.name %>
+        </span>
+        <% if (user.role === 'manager') { %>
+          <span class="badge badge-info">Manager</span>
+        <% } else if (user.role === 'employee') { %>
+          <span class="badge badge-secondary">Employee</span>
+        <% } %>
+      </div>
+    <% } %>
   </div>
 
   <div class="row mb-4">
@@ -15,6 +27,13 @@
         <i class="fas fa-plus"></i> Create New Ticket
       </a>
     </div>
+    <% if (user.role === 'admin') { %>
+      <div class="col-md-6 text-right">
+        <a href="/organizations" class="btn btn-info">
+          <i class="fas fa-building"></i> Manage Organizations
+        </a>
+      </div>
+    <% } %>
     <div class="col-md-6">
       <div class="form-group">
         <select id="ticketFilter" class="form-control">

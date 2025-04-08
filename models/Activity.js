@@ -7,7 +7,7 @@ const ActivitySchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['ticket', 'user', 'comment', 'system'],
+    enum: ['ticket', 'user', 'comment', 'system', 'organization'], // Added 'organization' here
     default: 'system'
   },
   user: {

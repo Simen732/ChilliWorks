@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 // Verify JWT token and set req.user
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   // Get token from cookie
   const token = req.cookies.token;
   
@@ -15,6 +16,17 @@ const verifyToken = (req, res, next) => {
     
     // Set user data in request
     req.user = decoded;
+
+    // Add organization check and populate
+    if (req.user) {
+      try {
+        const user = await User.findById(req.user.id).populate('organization');
+        req.user.organizationData = user.organization;
+      } catch (err) {
+        console.error('Error populating organization data:', err);
+      }
+    }
+
     next();
   } catch (err) {
     console.error('Token verification failed:', err.message);
@@ -25,12 +37,10 @@ const verifyToken = (req, res, next) => {
 
 // Ensure user is authenticated
 const ensureAuthenticated = (req, res, next) => {
-  if (req.user) {
-    return next();
+  if (!req.user) {
+    return res.redirect('/login');
   }
-  
-  req.flash('error_msg', 'Please log in to view this resource');
-  res.redirect('/auth/login');
+  next();
 };
 
 // Ensure user is a guest (not logged in)
@@ -41,8 +51,47 @@ const ensureGuest = (req, res, next) => {
   res.redirect('/dashboard');
 };
 
+// Ensure user is an admin
+const ensureAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    req.flash('error_msg', 'Not authorized');
+    return res.redirect('/dashboard');
+  }
+  next();
+};
+
+// Ensure user is a manager
+const ensureManager = (req, res, next) => {
+  if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'manager')) {
+    req.flash('error_msg', 'Not authorized');
+    return res.redirect('/dashboard');
+  }
+  next();
+};
+
+// Ensure user belongs to the same organization
+const ensureSameOrganization = (req, res, next) => {
+  // Allow admins to access any organization
+  if (req.user.role === 'admin') {
+    return next();
+  }
+  
+  // Check if user belongs to the organization
+  const targetOrgId = req.params.orgId || req.body.organizationId;
+  
+  if (!req.user.organization || req.user.organization.toString() !== targetOrgId) {
+    req.flash('error_msg', 'Not authorized');
+    return res.redirect('/dashboard');
+  }
+  
+  next();
+};
+
 module.exports = {
   verifyToken,
   ensureAuthenticated,
-  ensureGuest
+  ensureGuest,
+  ensureAdmin,
+  ensureManager,
+  ensureSameOrganization
 };

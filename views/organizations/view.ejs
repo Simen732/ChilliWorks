@@ -1,0 +1,177 @@
+<%- include('../partials/header') %>
+
+<div class="container">
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <h1><%= organization.name %></h1>
+      <p class="lead"><%= organization.description %></p>
+      
+      <div class="card mb-4">
+        <div class="card-header">
+          <h3>Organization Details</h3>
+        </div>
+        <div class="card-body">
+          <form action="/organizations/<%= organization._id %>?_method=PUT" method="POST">
+            <div class="form-group">
+              <label for="name">Organization Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="form-control"
+                value="<%= organization.name %>"
+                required
+              />
+            </div>
+            
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea
+                id="description"
+                name="description"
+                class="form-control"
+                rows="4"
+              ><%= organization.description %></textarea>
+            </div>
+            
+            <div class="form-group form-check">
+              <input 
+                type="checkbox" 
+                class="form-check-input" 
+                id="allowUserRegistration" 
+                name="allowUserRegistration"
+                <%= organization.settings.allowUserRegistration ? 'checked' : '' %>
+              >
+              <label class="form-check-label" for="allowUserRegistration">Allow user self-registration with code</label>
+            </div>
+            
+            <% if (organization.settings.allowUserRegistration) { %>
+              <div class="form-group">
+                <label>Registration Code</label>
+                <div class="input-group">
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    value="<%= organization.settings.registrationCode %>" 
+                    readonly
+                  >
+                  <div class="input-group-append">
+                    <form action="/organizations/<%= organization._id %>/regenerate-code" method="POST" class="d-inline">
+                      <button type="submit" class="btn btn-outline-secondary">Regenerate</button>
+                    </form>
+                  </div>
+                </div>
+                <small class="form-text text-muted">
+                  Share this code with users to allow them to register with your organization
+                </small>
+              </div>
+            <% } %>
+            
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">Update Organization</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div class="card mb-4">
+        <div class="card-header">
+          <h3>Users</h3>
+        </div>
+        <div class="card-body">
+          <form action="/organizations/<%= organization._id %>/users" method="POST" class="mb-4">
+            <div class="form-row">
+              <div class="col-md-5">
+                <input 
+                  type="email" 
+                  name="email" 
+                  class="form-control" 
+                  placeholder="User email"
+                  required
+                >
+              </div>
+              <div class="col-md-3">
+                <select name="role" class="form-control">
+                  <option value="employee">Employee</option>
+                  <% if (user.role === 'admin') { %>
+                    <option value="manager">Manager</option>
+                  <% } %>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <button type="submit" class="btn btn-success">Add User</button>
+              </div>
+            </div>
+          </form>
+          
+          <% if (members && members.length > 0) { %>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% members.forEach(user => { %>
+                    <tr>
+                      <td><%= user.name %></td>
+                      <td><%= user.email %></td>
+                      <td><span class="badge badge-<%= user.role === 'manager' ? 'info' : 'secondary' %>"><%= user.role %></span></td>
+                      <td>
+                        <% if (user.createdAt) { %>
+                          <%= new Date(user.createdAt).toLocaleDateString() %>
+                        <% } else { %>
+                          N/A
+                        <% } %>
+                      </td>
+                      <td>
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="userActionDropdown<%= user._id %>" data-bs-toggle="dropdown" aria-expanded="false">
+                            Actions
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="userActionDropdown<%= user._id %>">
+                            <% if (user.role !== 'manager') { %>
+                              <li>
+                                <form action="/organizations/<%= organization._id %>/members/<%= user._id %>/role?_method=PUT" method="POST">
+                                  <input type="hidden" name="role" value="manager">
+                                  <button type="submit" class="dropdown-item">Make Manager</button>
+                                </form>
+                              </li>
+                            <% } else { %>
+                              <li>
+                                <form action="/organizations/<%= organization._id %>/members/<%= user._id %>/role?_method=PUT" method="POST">
+                                  <input type="hidden" name="role" value="employee">
+                                  <button type="submit" class="dropdown-item">Make Employee</button>
+                                </form>
+                              </li>
+                            <% } %>
+                            <li>
+                              <form action="/organizations/<%= organization._id %>/members/<%= user._id %>?_method=DELETE" method="POST">
+                                <button type="submit" class="dropdown-item text-danger">Remove from Organization</button>
+                              </form>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          <% } else { %>
+            <div class="alert alert-info">
+              No users in this organization yet.
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

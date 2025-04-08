@@ -40,8 +40,6 @@ app.use(helmet.contentSecurityPolicy({
   }
 }));
 
-app.use(standardLimiter);
-
 // Socket.IO middleware to handle authentication
 io.use((socket, next) => {
   const token = socket.handshake.auth.token || socket.handshake.query.token;
@@ -156,6 +154,7 @@ app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/tickets', require('./routes/tickets'));
 app.use('/admin', require('./routes/admin'));
+app.use('/organizations', require('./routes/organizations'));
 
 // CSRF Protection
 const csrfProtection = csrf({ cookie: true }); // Add after cookie-parser middleware
@@ -172,6 +171,15 @@ app.use((req, res) => {
     error: { status: 404 }
   });
 });
+
+// Apply rate limiters only to specific routes that need protection:
+// For example:
+app.use('/login', rateLimiter.authLimiter);
+app.use('/register', rateLimiter.authLimiter);
+app.use('/password-reset', rateLimiter.authLimiter);
+
+// For ticket-related routes
+app.use('/tickets', rateLimiter.ticketLimiter);
 
 // Start server
 const PORT = process.env.PORT || 3000;

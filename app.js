@@ -22,7 +22,12 @@ dotenv.config();
 // Initialize app
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || 'https://10.12.47.226', 
+    methods: ["GET", "POST"]
+  }
+});
 
 // Apply Helmet (before other middleware)
 app.use(helmet()); // Add this line
@@ -118,13 +123,13 @@ app.use(cookieParser());
 
 // Express session - needed for flash messages
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'secret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { 
     maxAge: 60 * 60 * 1000, // 1 hour
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Enable in production
+    secure: true, // Always use secure cookies in production
     sameSite: 'strict'
   }
 }));

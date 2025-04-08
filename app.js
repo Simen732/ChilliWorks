@@ -39,7 +39,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const io = socketIo(server, {
   cors: {
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || 'https://10.12.47.226', 
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://10.12.47.226:3000',
     methods: ["GET", "POST"]
   }
 });
@@ -130,14 +130,14 @@ app.use(cookieParser());
 
 // Express session - needed for flash messages
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: { 
     maxAge: 60 * 60 * 1000, // 1 hour
     httpOnly: true,
-    secure: true, // Always use secure cookies in production
-    sameSite: 'strict'
+    secure: false, // Change to false for HTTP testing
+    sameSite: 'lax' // Change to lax for easier testing
   }
 }));
 

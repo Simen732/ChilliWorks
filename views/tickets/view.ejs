@@ -42,6 +42,10 @@
               <div class="mt-2">
                 <strong>Tildelt til:</strong> <%= ticket.assignedTo.name %>
               </div>
+            <% } else if (ticket.assignedRole) { %>
+              <div class="mt-2">
+                <strong>Tildelt til team:</strong> <%= ticket.assignedRole %>
+              </div>
             <% } %>
           </div>
           
@@ -63,6 +67,22 @@
                     <option value="Closed" <%= ticket.status === 'Closed' ? 'selected' : '' %>>Lukket</option>
                   </select>
                   <button type="submit" class="btn btn-primary">Oppdater</button>
+                </div>
+              </form>
+            </div>
+          <% } %>
+          
+          <% if (isAdmin) { %>
+            <div class="admin-actions mb-4">
+              <form action="/admin/tickets/<%= ticket._id %>/assign-role?_method=PUT" method="POST" class="d-inline">
+                <div class="form-group form-inline">
+                  <label for="role" class="mr-2">Tildel til team:</label>
+                  <select name="role" id="role" class="form-control mr-2">
+                    <option value="" <%= !ticket.assignedRole ? 'selected' : '' %>>Ingen tildeling</option>
+                    <option value="linje 1" <%= ticket.assignedRole === 'linje 1' ? 'selected' : '' %>>Linje 1</option>
+                    <option value="linje 2" <%= ticket.assignedRole === 'linje 2' ? 'selected' : '' %>>Linje 2</option>
+                  </select>
+                  <button type="submit" class="btn btn-primary">Tildel</button>
                 </div>
               </form>
             </div>

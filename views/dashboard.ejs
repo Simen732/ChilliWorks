@@ -82,6 +82,11 @@
                   </span>
                   <span class="category"><%= ticket.category %></span>
                   <span class="priority">Priority: <%= ticket.priority %></span>
+                  <% if (ticket.assignedTo) { %>
+                    <span class="assigned">Tildelt: <%= ticket.assignedTo.name %></span>
+                  <% } else if (ticket.assignedRole) { %>
+                    <span class="assigned-role">Team: <%= ticket.assignedRole %></span>
+                  <% } %>
                 </div>
                 <% if (isAdmin && ticket.user) { %>
                   <small>Created by: <%= ticket.user.name %></small>
@@ -105,6 +110,16 @@
                         <option value="Closed" <%= ticket.status === 'Closed' ? 'selected' : '' %>>Closed</option>
                       </select>
                       <button type="submit" class="btn btn-success">Update</button>
+                    </div>
+                  </form>
+                  <form action="/admin/tickets/<%= ticket._id %>/assign-role?_method=PUT" method="POST">
+                    <div class="d-flex align-items-center">
+                      <select name="role" class="form-control role-select">
+                        <option value="" <%= !ticket.assignedRole ? 'selected' : '' %>>Ingen team</option>
+                        <option value="linje 1" <%= ticket.assignedRole === 'linje 1' ? 'selected' : '' %>>Linje 1</option>
+                        <option value="linje 2" <%= ticket.assignedRole === 'linje 2' ? 'selected' : '' %>>Linje 2</option>
+                      </select>
+                      <button type="submit" class="btn btn-info">Tildel</button>
                     </div>
                   </form>
                 <% } %>

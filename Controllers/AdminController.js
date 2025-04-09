@@ -14,6 +14,10 @@ const getDashboard = async (req, res) => {
     const resolvedTickets = await Ticket.countDocuments({ status: 'Resolved' });
     const userCount = await User.countDocuments({ role: 'user' });
     
+    // Add counts for tickets assigned to specific roles
+    const linje1Tickets = await Ticket.countDocuments({ assignedRole: 'linje 1' });
+    const linje2Tickets = await Ticket.countDocuments({ assignedRole: 'linje 2' });
+    
     // Get recent activities
     const recentActivities = await activityService.getRecentActivities(10);
     
@@ -22,6 +26,8 @@ const getDashboard = async (req, res) => {
       inProgressTickets,
       resolvedTickets,
       userCount,
+      linje1Tickets,
+      linje2Tickets,
       recentActivities
     });
   } catch (err) {
@@ -193,10 +199,83 @@ const deleteUser = async (req, res) => {
   }
 };
 
+// Assign ticket to role
+const assignTicketToRole = async (req, res) => {
+  try {
+    const { role } = req.body;
+    const ticketId = req.params.id;
+    
+    // Validate role is either linje 1, linje 2, or null (to clear role assignment)
+    if (role !== 'linje 1' && role !== 'linje 2' && role !== '') {
+      req.flash('error_msg', 'Invalid role specified');
+      return res.redirect(`/tickets/${ticketId}`);
+    }
+    
+    // If role is empty string, set to null (clear assignment)
+    const assignedRole = role === '' ? null : role;
+    
+    // Update ticket with role assignment and set status to In Progress if not already resolved/closed
+    const ticket = await Ticket.findById(ticketId);
+    
+    if (!ticket) {
+      req.flash('error_msg', 'Ticket not found');
+      return res.redirect('/dashboard');
+    }
+    
+    // Remove individual assignment if assigning to role
+    if (assignedRole) {
+      ticket.assignedTo = null;
+    }
+    
+    ticket.assignedRole = assignedRole;
+    
+    // Update status to In Progress if it's currently Open
+    if (ticket.status === 'Open' && assignedRole) {
+      ticket.status = 'In Progress';
+    }
+    
+    ticket.updatedAt = Date.now();
+    await ticket.save();
+    
+    // Log activity
+    const actionDescription = assignedRole 
+      ? `assigned ticket to ${assignedRole} team` 
+      : 'removed role assignment from ticket';
+    
+    await activityService.logActivity(
+      actionDescription,
+      'ticket',
+      ticketId,
+      req.user.id
+    );
+    
+    // Emit socket event for real-time update
+    const io = req.app.get('io');
+    io.to(`ticket-${ticket._id}`).emit('ticket-update', {
+      ticketId: ticket._id,
+      status: ticket.status,
+      assignedRole: ticket.assignedRole,
+      updatedBy: req.user.name,
+      timestamp: new Date()
+    });
+    
+    req.flash('success_msg', assignedRole 
+      ? `Ticket assigned to ${assignedRole} team` 
+      : 'Role assignment removed');
+    
+    res.redirect(`/tickets/${ticketId}`);
+  } catch (err) {
+    console.error(err);
+    req.flash('error_msg', 'Error assigning ticket to role');
+    res.redirect(`/tickets/${req.params.id}`);
+  }
+};
+
 module.exports = {
   getDashboard,
   getUsers,
   updateRole,
   updateTicketStatus,
-  deleteUser
+  deleteUser,
+  assignTicketToRole
 };

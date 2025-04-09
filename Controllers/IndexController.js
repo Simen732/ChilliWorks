@@ -19,14 +19,38 @@ const getDashboard = async (req, res) => {
 
     switch(req.user.role) {
       case 'admin':
-      case 'linje 1':
-      case 'linje 2':
-        // Admin and support staff see all tickets
+        // Admin sees all tickets
         tickets = await Ticket.find()
                           .populate('user', 'name email')
                           .populate('assignedTo', 'name email')
                           .populate('organization', 'name')
                           .sort({ createdAt: -1 });
+        break;
+        
+      case 'linje 1':
+        // Linje 1 sees tickets they created or that are assigned to linje 1 role
+        tickets = await Ticket.find({
+                         $or: [
+                           { user: req.user.id },
+                           { assignedRole: 'linje 1' }
+                         ]
+                       })
+                       .populate('user', 'name email')
+                       .populate('assignedTo', 'name email')
+                       .sort({ createdAt: -1 });
+        break;
+        
+      case 'linje 2':
+        // Linje 2 sees tickets they created or that are assigned to linje 2 role
+        tickets = await Ticket.find({
+                         $or: [
+                           { user: req.user.id },
+                           { assignedRole: 'linje 2' }
+                         ]
+                       })
+                       .populate('user', 'name email')
+                       .populate('assignedTo', 'name email')
+                       .sort({ createdAt: -1 });
         break;
         
       case 'manager':
@@ -37,21 +61,8 @@ const getDashboard = async (req, res) => {
                           .sort({ createdAt: -1 });
         break;
         
-      case 'employee':
-        // Employees see tickets assigned to them and tickets they created
-        tickets = await Ticket.find({
-                         $or: [
-                           { assignedTo: req.user.id },
-                           { user: req.user.id }
-                         ]
-                       })
-                       .populate('user', 'name email')
-                       .populate('assignedTo', 'name email')
-                       .sort({ createdAt: -1 });
-        break;
-        
       default:
-        // Default case for other roles
+        // Default case for other roles - they only see their own tickets
         tickets = await Ticket.find({ user: req.user.id })
                           .sort({ createdAt: -1 });
         break;
@@ -70,7 +81,19 @@ const getDashboard = async (req, res) => {
   }
 };
 
+// Add this function to the existing controller
+const getUserManual = (req, res) => {
+  // Render different manual content based on user role
+  const userRole = req.user.role;
+  res.render('manual', { 
+    userRole, 
+    isAdmin: userRole === 'admin',
+    isSupport: ['linje 1', 'linje 2'].includes(userRole)
+  });
+};
+
 module.exports = {
   getHomePage,
-  getDashboard
+  getDashboard,
+  getUserManual
 };

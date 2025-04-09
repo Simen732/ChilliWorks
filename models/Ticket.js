@@ -34,6 +34,12 @@ const TicketSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  // New field for role-based assignment
+  assignedRole: {
+    type: String,
+    enum: ['linje 1', 'linje 2', null],
+    default: null
+  },
   organization: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Organization'

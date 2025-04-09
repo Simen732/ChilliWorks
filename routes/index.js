@@ -9,4 +9,7 @@ router.get('/', IndexController.getHomePage);
 // Dashboard
 router.get('/dashboard', ensureAuthenticated, IndexController.getDashboard);
 
+// User Manual
+router.get('/manual', ensureAuthenticated, IndexController.getUserManual);
+
 module.exports = router;

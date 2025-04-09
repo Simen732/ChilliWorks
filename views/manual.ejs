@@ -1,0 +1,227 @@
+<%- include('./partials/header') %>
+
+<div class="container">
+  <div class="row mt-4">
+    <div class="col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <h2>Brukermanual - ChilliWorks</h2>
+        </div>
+        <div class="card-body">
+          
+          <% if (isAdmin) { %>
+            <!-- Admin manual -->
+            <h3>Administrator Manual</h3>
+            
+            <div class="section">
+              <h4>Administratorpanel</h4>
+              <p>Som administrator har du tilgang til "Admin Panel" i toppmenyen, som gir deg følgende funksjoner:</p>
+              <ul>
+                <li>Oversikt over henvendelser i systemet (åpne, under behandling, løste, tildelt Linje 1, tildelt Linje 2)</li>
+                <li>Totalt antall brukere i systemet</li>
+                <li>Nylig aktivitet i systemet</li>
+              </ul>
+            </div>
+            
+            <div class="section">
+              <h4>Brukeradministrasjon</h4>
+              <p>Fra admin-kontrollpanelet kan du:</p>
+              <ul>
+                <li>Klikke på "Administrer Brukere" for å se alle brukere i systemet</li>
+                <li>Endre brukerroller (Bruker, Linje 1, Linje 2, Admin)</li>
+                <li>Slette brukere (du kan ikke slette din egen konto)</li>
+              </ul>
+            </div>
+            
+            <div class="section">
+              <h4>Administrere Organisasjoner</h4>
+              <p>Fra kontrollpanelet kan du administrere organisasjoner:</p>
+              <ul>
+                <li>Se alle organisasjoner</li>
+                <li>Opprette nye organisasjoner</li>
+                <li>Redigere eksisterende organisasjoner</li>
+                <li>Legge til medlemmer i organisasjoner</li>
+                <li>Endre medlemmers roller i organisasjoner</li>
+              </ul>
+            </div>
+            
+            <div class="section">
+              <h4>Tildele Henvendelser til Supportlinjer</h4>
+              <ol>
+                <li>Åpne en henvendelse</li>
+                <li>Finn "Tildel til team" seksjonen</li>
+                <li>Velg enten Linje 1, Linje 2, eller ingen tildeling</li>
+                <li>Klikk på "Tildel" knappen</li>
+                <li>Henvendelsen vil nå være synlig for alle supportmedarbeidere i den valgte linjen</li>
+              </ol>
+            </div>
+            
+            <div class="section">
+              <h4>Oppdatere Henvendelsesstatus</h4>
+              <ol>
+                <li>Du kan oppdatere status på alle henvendelser</li>
+                <li>Åpne henvendelsen og velg ny status fra nedtrekksmenyen</li>
+                <li>Klikk på "Oppdater" knappen</li>
+              </ol>
+            </div>
+            
+            <div class="section">
+              <h4>Slette Henvendelser</h4>
+              <ol>
+                <li>Kun administrator kan slette henvendelser, og kun hvis de har status "Lukket"</li>
+                <li>Åpne en lukket henvendelse</li>
+                <li>Klikk på "Slett Henvendelse" knappen</li>
+                <li>Bekreft slettingen i dialogboksen som vises</li>
+              </ol>
+            </div>
+            
+          <% } else if (isSupport) { %>
+            <!-- Linje 1 and Linje 2 manual -->
+            <h3>Support Personell Manual (Linje 1 og Linje 2)</h3>
+            
+            <div class="section">
+              <h4>Henvendelser du kan se</h4>
+              <p>Som supportpersonell kan du se:</p>
+              <ul>
+                <li>Alle henvendelser tildelt din supportlinje (Linje 1 eller Linje 2)</li>
+                <li>Henvendelser som du selv har opprettet</li>
+              </ul>
+            </div>
+            
+            <div class="section">
+              <h4>Oppdatere Status på Henvendelser</h4>
+              <ol>
+                <li>Åpne henvendelsen</li>
+                <li>Finn "Oppdater Status" feltet</li>
+                <li>Velg ny status fra nedtrekksmenyen:
+                  <ul>
+                    <li><strong>Åpen</strong>: Henvendelse er registrert men ikke påbegynt</li>
+                    <li><strong>Under Behandling</strong>: Henvendelse er under arbeid</li>
+                    <li><strong>Løst</strong>: Problemet er løst</li>
+                    <li><strong>Lukket</strong>: Henvendelsen er avsluttet</li>
+                  </ul>
+                </li>
+                <li>Klikk på "Oppdater" knappen</li>
+              </ol>
+            </div>
+            
+            <div class="section">
+              <h4>Legge til Kommentarer</h4>
+              <ol>
+                <li>Åpne henvendelsen</li>
+                <li>Scroll ned til kommentarseksjonen</li>
+                <li>Skriv din kommentar</li>
+                <li>Klikk på "Legg til Kommentar"</li>
+              </ol>
+            </div>
+            
+            <div class="section">
+              <h4>Søk og Filtrering</h4>
+              <ol>
+                <li>På kontrollpanelet, bruk søkefeltet øverst for å søke etter henvendelser</li>
+                <li>Bruk statusfilteret for å vise henvendelser med spesifikk status</li>
+              </ol>
+            </div>
+            
+          <% } else { %>
+            <!-- Regular user manual -->
+            <h3>Brukerguide</h3>
+            
+            <div class="section">
+              <h4>Navigasjon</h4>
+              <ul>
+                <li><strong>Kontrollpanel</strong>: Din hovedside som viser alle dine henvendelser</li>
+                <li><strong>Ny Henvendelse</strong>: For å opprette en ny støttehenvendelse</li>
+                <li><strong>Logg ut</strong>: For å avslutte din økt</li>
+              </ul>
+            </div>
+            
+            <div class="section">
+              <h4>Opprette ny henvendelse</h4>
+              <ol>
+                <li>Klikk på "Ny Henvendelse" i toppmenyen</li>
+                <li>Fyll ut skjemaet:
+                  <ul>
+                    <li><strong>Tittel</strong>: Kort beskrivelse av problemet</li>
+                    <li><strong>Kategori</strong>: Velg mellom Maskinvare, Programvare, Nettverk eller Annet</li>
+                    <li><strong>Prioritet</strong>: Velg mellom Lav, Middels, Høy eller Kritisk</li>
+                    <li><strong>Beskrivelse</strong>: Detaljert beskrivelse av problemet (minimum 10 tegn)</li>
+                  </ul>
+                </li>
+                <li>Klikk på "Send Henvendelse"</li>
+              </ol>
+            </div>
+            
+            <div class="section">
+              <h4>Se dine henvendelser</h4>
+              <ol>
+                <li>Gå til "Kontrollpanel"</li>
+                <li>Her vises alle dine henvendelser med status og annen informasjon</li>
+                <li>Bruk søkefeltet for å finne spesifikke henvendelser</li>
+                <li>Bruk statusfilteret for å vise henvendelser basert på status</li>
+              </ol>
+            </div>
+            
+            <div class="section">
+              <h4>Vise henvendelsesdetaljer</h4>
+              <ol>
+                <li>Klikk på tittelen til henvendelsen i kontrollpanelet</li>
+                <li>Her kan du se all detaljer om henvendelsen</li>
+                <li>Under kan du se alle kommentarer</li>
+              </ol>
+            </div>
+            
+            <div class="section">
+              <h4>Legge til kommentar</h4>
+              <ol>
+                <li>Åpne en henvendelse</li>
+                <li>Scroll ned til "Legg til Kommentar" seksjonen</li>
+                <li>Skriv din kommentar i tekstfeltet</li>
+                <li>Klikk på "Legg til Kommentar"</li>
+              </ol>
+            </div>
+            
+            <div class="section">
+              <h4>Redigere henvendelse</h4>
+              <ol>
+                <li>Åpne henvendelsen du vil redigere</li>
+                <li>Klikk på "Rediger Henvendelse" knappen</li>
+                <li>Oppdater informasjonen</li>
+                <li>Klikk på "Lagre Endringer"</li>
+              </ol>
+            </div>
+          <% } %>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .section:last-child {
+    border-bottom: none;
+  }
+  
+  .section h4 {
+    margin-bottom: 1rem;
+    color: var(--info-color);
+  }
+  
+  .section ul, .section ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .section li {
+    margin-bottom: 0.5rem;
+  }
+</style>
+
+<%- include('./partials/footer') %>

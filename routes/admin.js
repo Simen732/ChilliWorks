@@ -14,6 +14,9 @@ router.delete('/users/:id', [ensureAuthenticated, ensureAdmin], AdminController.
 // Update ticket status - allow support staff
 router.put('/tickets/:id/status', [ensureAuthenticated, ensureSupport], AdminController.updateTicketStatus);
 
+// Add this new route to admin.js
+router.put('/tickets/:id/assign-role', [ensureAuthenticated, ensureAdmin], AdminController.assignTicketToRole);
+
 // Organization routes
 router.get('/organizations', [ensureAuthenticated, ensureAdmin], OrganizationController.getOrganizations);
 router.get('/organizations/create', [ensureAuthenticated, ensureAdmin], OrganizationController.getCreateOrganization);

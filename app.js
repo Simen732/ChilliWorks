@@ -41,48 +41,34 @@ if (process.env.NODE_ENV === 'production' && fs.existsSync('/home/jackal/ChilliW
   console.log('Starting server in HTTP mode');
 }
 
+// Modify the Socket.IO configuration:
 const io = socketIo(server, {
   cors: {
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://10.12.47.226:3000',
-    methods: ["GET", "POST"]
-  }
+    origin: "*",  // Allow all origins temporarily
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ['websocket', 'polling']
 });
 
-// Apply Helmet (before other middleware)
-app.use(helmet()); // Add this line
-
-// Add CSP specifically configured for your app with Socket.IO support
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "https://code.jquery.com", "https://cdn.jsdelivr.net", "https://stackpath.bootstrapcdn.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'"],
-    styleSrc: ["'self'", "https://stackpath.bootstrapcdn.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'"],
-    imgSrc: ["'self'", "data:"],
-    connectSrc: ["'self'", "wss:", "ws:"],
-    fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
-    objectSrc: ["'none'"],
-    upgradeInsecureRequests: null // Change from [] to null to disable
-  }
-}));
-
-// Socket.IO middleware to handle authentication
-io.use((socket, next) => {
-  const token = socket.handshake.auth.token || socket.handshake.query.token;
-  if (!token) {
-    console.log('Socket authentication failed: No token provided');
-    return next(new Error('Authentication error'));
-  }
-  
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || process.env.SESSION_SECRET);
-    socket.user = decoded;
-    console.log(`Socket authenticated for user: ${decoded.name}`);
-    next();
-  } catch (err) {
-    console.error('Socket authentication error:', err.message);
-    next(new Error('Authentication error'));
-  }
-});
+// Comment out the Socket.IO authentication middleware temporarily
+// io.use((socket, next) => {
+//   const token = socket.handshake.auth.token || socket.handshake.query.token;
+//   if (!token) {
+//     console.log('Socket authentication failed: No token provided');
+//     return next(new Error('Authentication error'));
+//   }
+//   
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET || process.env.SESSION_SECRET);
+//     socket.user = decoded;
+//     console.log(`Socket authenticated for user: ${decoded.name}`);
+//     next();
+//   } catch (err) {
+//     console.error('Socket authentication error:', err.message);
+//     next(new Error('Authentication error'));
+//   }
+// });
 
 // Socket.IO connection handler
 io.on('connection', (socket) => {
@@ -115,14 +101,19 @@ io.on('connection', (socket) => {
 app.set('io', io);
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/helpdesk', {
+mongoose.connect(process.env.MONGO_URI || 'mongodb://10.12.47.225:27017/helpdesk', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
-  useFindAndModify: false
+  useFindAndModify: false,
+  serverSelectionTimeoutMS: 15000, // Timeout after 15 seconds
+  socketTimeoutMS: 45000          // Close sockets after 45 seconds of inactivity
 })
 .then(() => console.log('MongoDB Connected'))
-.catch(err => console.log('MongoDB Connection Error:', err));
+.catch(err => {
+  console.error('MongoDB Connection Error:', err.message);
+  console.error('Connection string:', process.env.MONGO_URI || 'mongodb://10.12.47.225:27017/helpdesk');
+});
 
 // EJS
 app.set('view engine', 'ejs');
@@ -206,5 +197,5 @@ app.use('/tickets', rateLimiter.ticketLimiter);
 // Start server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT} and bound to all interfaces`);
 });

@@ -1,18 +1,18 @@
 :root {
-  --primary-color: #4a6fa5;      /* More muted blue */
-  --primary-dark: #375580;       /* Darker muted blue */
-  --secondary-color: #6c757d;    /* Gray */
-  --success-color: #52b788;      /* Muted green */
-  --danger-color: #d66853;       /* Muted red */
-  --warning-color: #e9c46a;      /* Muted yellow/orange */
-  --info-color: #7d8cc4;         /* Muted purple-blue */
-  --light-color: #e9ecef;        /* Light gray */
-  --dark-color: #212529;         /* Dark gray, not pure black */
-  --border-color: #495057;       /* Medium-dark gray */
-  --accent-purple: #9b9ecb;      /* Very muted light purple */
-  --background-dark: #2d3748;    /* Dark blue-gray */
-  --card-bg: #283141;            /* Slightly lighter blue-gray */
-  --text-light: #e9ecef;         /* Light text color */
+  --primary-color: #a5364a;      /* Muted red */
+  --primary-dark: #802836;       /* Darker muted red */
+  --secondary-color: #6c757d;    /* Keep gray */
+  --success-color: #52b788;      /* Keep muted green */
+  --danger-color: #d66853;       /* Adjust to a complementary orange-red */
+  --warning-color: #e9c46a;      /* Keep muted yellow/orange */
+  --info-color: #c47d7d;         /* Muted light red */
+  --light-color: #e9ecef;        /* Keep light gray */
+  --dark-color: #212529;         /* Keep dark gray */
+  --border-color: #704950;       /* Reddish-tinted border */
+  --accent-purple: #cb9b9b;      /* Muted light red/pink */
+  --background-dark: #3e2d2f;    /* Red-tinted dark background */
+  --card-bg: #332829;            /* Slightly lighter red-tinted dark */
+  --text-light: #e9ecef;         /* Keep light text color */
 }
 
 /* Starry Night Background */
@@ -24,7 +24,7 @@
   height: 100%;
   z-index: -1;
   overflow: hidden;
-  background: radial-gradient(ellipse at bottom, #1a2234 0%, #090a0f 100%);
+  background: radial-gradient(ellipse at bottom, #29191e 0%, #0f090a 100%);
 }
 
 @keyframes animateStars {
@@ -68,7 +68,7 @@ body {
 .navbar {
   background: linear-gradient(90deg, rgba(40, 49, 65, 0.9) 0%, rgba(45, 55, 72, 0.9) 100%) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid #4a6fa5;
+  border-bottom: 1px solid #a5364a;
 }
 
 .card {
@@ -84,20 +84,20 @@ body {
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 8px rgba(74, 111, 165, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 8px rgba(165, 54, 74, 0.2);
 }
 
 .card-header {
-  background: linear-gradient(135deg, #4a6fa5 0%, #505d8c 100%);
+  background: linear-gradient(135deg, #a5364a 0%, #8c454f 100%);
   border-bottom: none;
   color: white;
   font-weight: 500;
   padding: 1rem 1.5rem;
 }
 
-/* Updated button styling with blue-green gradient */
+/* Updated button styling with red gradient */
 .btn-primary {
-  background: linear-gradient(to right, #4a6fa5, #4a8f9e); /* Blue with green tint */
+  background: linear-gradient(to right, #a5364a, #b84a52); /* Red with deeper red tint */
   border: none;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgba(55, 85, 128, 0.3);
@@ -107,13 +107,13 @@ body {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(to right, #4a8f9e, #4a6fa5);
+  background: linear-gradient(to right, #b84a52, #a5364a);
   box-shadow: 0 4px 12px rgba(55, 85, 128, 0.4);
   transform: translateY(-2px);
 }
 
 .btn-secondary {
-  background: linear-gradient(to right, #505d8c, #4a8f9e);
+  background: linear-gradient(to right, #704950, #a5364a);
   border: none;
   box-shadow: 0 2px 6px rgba(55, 85, 128, 0.3);
   transition: all 0.3s ease;
@@ -122,13 +122,13 @@ body {
 }
 
 .btn-secondary:hover {
-  background: linear-gradient(to right, #4a8f9e, #505d8c);
+  background: linear-gradient(to right, #a5364a, #704950);
   box-shadow: 0 4px 12px rgba(55, 85, 128, 0.4);
   transform: translateY(-2px);
 }
 
 .btn-warning {
-  background: linear-gradient(to right, #5d7aa5, #4a8f9e);
+  background: linear-gradient(to right, #a55d4a, #a5364a);
   border: none;
   color: white;
   box-shadow: 0 2px 6px rgba(55, 85, 128, 0.3);
@@ -138,14 +138,14 @@ body {
 }
 
 .btn-warning:hover {
-  background: linear-gradient(to right, #4a8f9e, #5d7aa5);
+  background: linear-gradient(to right, #a5364a, #a55d4a);
   color: white;
   box-shadow: 0 4px 12px rgba(55, 85, 128, 0.4);
   transform: translateY(-2px);
 }
 
 .btn-danger {
-  background: linear-gradient(to right, #34547e, #2d4d4d);
+  background: linear-gradient(to right, #7e3434, #4d2d2d);
   border: none;
   box-shadow: 0 2px 6px rgba(40, 49, 65, 0.3);
   transition: all 0.3s ease;
@@ -154,13 +154,13 @@ body {
 }
 
 .btn-danger:hover {
-  background: linear-gradient(to right, #2d4d4d, #34547e);
+  background: linear-gradient(to right, #4d2d2d, #7e3434);
   box-shadow: 0 4px 12px rgba(40, 49, 65, 0.4);
   transform: translateY(-2px);
 }
 
 .btn-success {
-  background: linear-gradient(to right, #4a6fa5, #4a8f9e);
+  background: linear-gradient(to right, #a5364a, #b84a52);
   border: none;
   box-shadow: 0 2px 6px rgba(55, 85, 128, 0.3);
   transition: all 0.3s ease;
@@ -169,7 +169,7 @@ body {
 }
 
 .btn-success:hover {
-  background: linear-gradient(to right, #4a8f9e, #4a6fa5);
+  background: linear-gradient(to right, #b84a52, #a5364a);
   box-shadow: 0 4px 12px rgba(55, 85, 128, 0.4);
   transform: translateY(-2px);
 }
@@ -188,7 +188,7 @@ body {
   bottom: -2px;
   width: 120px;
   height: 2px;
-  background: linear-gradient(to right, var(--accent-purple), var(--primary-color));
+  background: linear-gradient(to right, #cb9b9b, #a5364a);
 }
 
 .admin-header {
@@ -205,7 +205,7 @@ body {
   bottom: -2px;
   width: 120px;
   height: 2px;
-  background: linear-gradient(to right, var(--info-color), var(--accent-purple));
+  background: linear-gradient(to right, #cb9b9b, #c47d7d);
 }
 
 /* Ticket List */
@@ -273,7 +273,7 @@ body {
 }
 
 .status-open {
-  background: linear-gradient(135deg, #4a6fa5, #52b788);
+  background: linear-gradient(135deg, #a5364a, #52b788);
   color: white;
 }
 
@@ -460,7 +460,7 @@ footer {
 
 /* Badges */
 .badge-primary {
-  background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+  background: linear-gradient(135deg, #a5364a, #c47d7d);
 }
 
 /* Utilities */
@@ -750,11 +750,11 @@ footer {
 
 /* Keep links properly styled */
 .card:hover a:not(.btn) {
-  color: #4a6fa5 !important; /* Use your theme's link color */
+  color: #c47d7d !important; 
 }
 
 .card:hover a:not(.btn):hover {
-  color: #7d8cc4 !important; /* Lighter color on link hover */
+  color: #cb9b9b !important;
   text-decoration: underline;
 }
 
@@ -773,12 +773,12 @@ footer {
 /* Maintain proper button styling on hover */
 .card:hover .btn-primary,
 .organization-card:hover .btn-primary {
-  background: linear-gradient(to right, #4a6fa5, #4a8f9e) !important;
+  background: linear-gradient(to right, #a5364a, #b84a52) !important;
 }
 
 .card:hover .btn-primary:hover,
 .organization-card:hover .btn-primary:hover {
-  background: linear-gradient(to right, #4a8f9e, #4a6fa5) !important;
+  background: linear-gradient(to right, #b84a52, #a5364a) !important;
   box-shadow: 0 4px 12px rgba(55, 85, 128, 0.4) !important;
   transform: translateY(-2px) !important;
 }

@@ -4,24 +4,24 @@
   <% if (!user) { %>
     <!-- Content for non-logged in users -->
     <div class="jumbotron text-center mt-5" style="background: linear-gradient(135deg, rgba(40, 49, 65, 0.9), rgba(45, 55, 72, 0.9)); border: 1px solid var(--primary-color); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(74, 111, 165, 0.2); padding: 3rem;">
-      <h1 class="display-4" style="color: white; text-shadow: 0 0 10px rgba(74, 111, 165, 0.3);">Welcome to ChilliWorks</h1>
-      <p class="lead" style="color: rgba(233, 236, 239, 0.9);">A modern ticketing system for managing support requests</p>
+      <h1 class="display-4" style="color: white; text-shadow: 0 0 10px rgba(74, 111, 165, 0.3);">Velkommen til ChilliWorks</h1>
+      <p class="lead" style="color: rgba(233, 236, 239, 0.9);">Et moderne system for å håndtere støttehenvendelser</p>
       <hr class="my-4" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); height: 2px; border: none; opacity: 0.5;">
-      <p style="color: rgba(233, 236, 239, 0.8);">Get started by creating an account or logging in</p>
+      <p style="color: rgba(233, 236, 239, 0.8);">Kom i gang ved å opprette en konto eller logge inn</p>
       <div class="mt-4">
-        <a href="/auth/login" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Login</a>
-        <a href="/auth/register" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Register</a>
+        <a href="/auth/login" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Logg inn</a>
+        <a href="/auth/register" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Registrer</a>
       </div>
     </div>
   <% } else { %>
     <!-- Content for logged in users -->
     <div class="jumbotron text-center mt-5" style="background: linear-gradient(135deg, rgba(40, 49, 65, 0.9), rgba(45, 55, 72, 0.9)); border: 1px solid var(--primary-color); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(74, 111, 165, 0.2); padding: 3rem;">
-      <h1 class="display-4" style="color: white; text-shadow: 0 0 10px rgba(74, 111, 165, 0.3);">Welcome Back, <%= user.name %>!</h1>
-      <p class="lead" style="color: rgba(233, 236, 239, 0.9);">Thank you for using ChilliWorks</p>
+      <h1 class="display-4" style="color: white; text-shadow: 0 0 10px rgba(74, 111, 165, 0.3);">Velkommen tilbake, <%= user.name %>!</h1>
+      <p class="lead" style="color: rgba(233, 236, 239, 0.9);">Takk for at du bruker ChilliWorks</p>
       <hr class="my-4" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); height: 2px; border: none; opacity: 0.5;">
       <div class="mt-4">
-        <a href="/dashboard" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Go to Dashboard</a>
-        <a href="/tickets/create" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Submit a Ticket</a>
+        <a href="/dashboard" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Gå til Kontrollpanel</a>
+        <a href="/tickets/create" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Opprett Henvendelse</a>
       </div>
     </div>
   <% } %>
@@ -31,8 +31,8 @@
       <div class="card mb-4" style="transform: translateY(0); transition: transform 0.3s ease, box-shadow 0.3s ease;">
         <div class="card-body text-center">
           <i class="fas fa-ticket-alt fa-4x mb-3" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-          <h3>Create Tickets</h3>
-          <p>Submit support requests with details about your issue</p>
+          <h3>Opprett Henvendelser</h3>
+          <p>Send inn støtteforespørsler med detaljer om ditt problem</p>
         </div>
       </div>
     </div>
@@ -40,8 +40,8 @@
       <div class="card mb-4" style="transform: translateY(0); transition: transform 0.3s ease, box-shadow 0.3s ease;">
         <div class="card-body text-center">
           <i class="fas fa-comments fa-4x mb-3" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-          <h3>Track Progress</h3>
-          <p>Follow the status of your tickets and communicate with support staff</p>
+          <h3>Følg Fremdrift</h3>
+          <p>Følg statusen på dine henvendelser og kommuniser med supportpersonell</p>
         </div>
       </div>
     </div>
@@ -49,8 +49,8 @@
       <div class="card mb-4" style="transform: translateY(0); transition: transform 0.3s ease, box-shadow 0.3s ease;">
         <div class="card-body text-center">
           <i class="fas fa-check-circle fa-4x mb-3" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
-          <h3>Get Solutions</h3>
-          <p>Receive timely resolutions to your technical problems</p>
+          <h3>Få Løsninger</h3>
+          <p>Motta raske løsninger på dine tekniske problemer</p>
         </div>
       </div>
     </div>

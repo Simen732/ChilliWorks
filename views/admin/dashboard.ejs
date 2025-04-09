@@ -2,40 +2,40 @@
 
 <div class="container">
   <div class="admin-header">
-    <h1>Admin Dashboard</h1>
-    <p class="lead">Welcome to the admin control panel</p>
+    <h1>Admin Kontrollpanel</h1>
+    <p class="lead">Velkommen til admin kontrollpanelet</p>
   </div>
 
   <div class="stats-grid mb-5">
     <div class="stat-card">
       <h3><%= openTickets %></h3>
-      <p>Open Tickets</p>
+      <p>Åpne Henvendelser</p>
     </div>
     <div class="stat-card">
       <h3><%= inProgressTickets %></h3>
-      <p>In Progress</p> 
+      <p>Under Behandling</p> 
     </div>
     <div class="stat-card">
       <h3><%= resolvedTickets %></h3>
-      <p>Resolved</p>
+      <p>Løste</p>
     </div>
     <div class="stat-card">
       <h3><%= userCount %></h3>
-      <p>Total Users</p>
+      <p>Totalt Antall Brukere</p>
     </div>
   </div>
 
   <div class="row mb-4">
     <div class="col-md-6">
       <a href="/admin/users" class="btn btn-primary">
-        <i class="fas fa-users"></i> Manage Users
+        <i class="fas fa-users"></i> Administrer Brukere
       </a>
     </div>
   </div>
 
   <div class="card">
     <div class="card-header">
-      <h3>Recent Activity</h3>
+      <h3>Nylig Aktivitet</h3>
     </div>
     <div class="card-body">
       <% if (recentActivities && recentActivities.length > 0) { %>
@@ -71,7 +71,7 @@
           <% }); %>
         </ul>
       <% } else { %>
-        <p class="text-muted">No recent activities found.</p>
+        <p class="text-muted">Ingen nylig aktivitet funnet.</p>
       <% } %>
     </div>
   </div>

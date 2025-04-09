@@ -27,7 +27,7 @@
         <ul class="navbar-nav ml-auto">
           <% if (user) { %>
             <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Dashboard</a>
+              <a class="nav-link" href="/dashboard">Kontrollpanel</a>
             </li>
             <% if (user.role === 'admin') { %>
               <li class="nav-item">
@@ -35,10 +35,10 @@
               </li>
             <% } %>
             <li class="nav-item">
-              <a class="nav-link" href="/tickets/create">New Ticket</a>
+              <a class="nav-link" href="/tickets/create">Ny Henvendelse</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/auth/logout">Logout</a>
+              <a class="nav-link" href="/auth/logout">Logg ut</a>
             </li>
           <% } else { %>
             <!-- Non-logged in user links -->
@@ -87,3 +87,4 @@
   <% } %>
 </body>
 </html>
+``` 

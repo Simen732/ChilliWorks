@@ -5,62 +5,61 @@
     <div class="col-md-8 m-auto">
       <div class="card">
         <div class="card-header">
-          <h3>Create New Support Ticket</h3>
+          <h3>Opprett Ny Støttehenvendelse</h3>
         </div>
         <div class="card-body">
-          <!-- Validation error container will be inserted here -->
           <div id="description-validation-error"></div>
           
           <form action="/tickets" method="POST">
             <div class="form-group">
-              <label for="title">Title</label>
+              <label for="title">Tittel</label>
               <input
                 type="text"
                 id="title"
                 name="title"
                 class="form-control"
-                placeholder="Brief description of the issue"
+                placeholder="Kort beskrivelse av problemet"
                 required
               />
             </div>
             
             <div class="form-group">
-              <label for="category">Category</label>
+              <label for="category">Kategori</label>
               <select id="category" name="category" class="form-control" required>
-                <option value="" disabled selected>Select a category</option>
-                <option value="Hardware">Hardware</option>
-                <option value="Software">Software</option>
-                <option value="Network">Network</option>
-                <option value="Other">Other</option>
+                <option value="" disabled selected>Velg en kategori</option>
+                <option value="Hardware">Maskinvare</option>
+                <option value="Software">Programvare</option>
+                <option value="Network">Nettverk</option>
+                <option value="Other">Annet</option>
               </select>
             </div>
             
             <div class="form-group">
-              <label for="priority">Priority</label>
+              <label for="priority">Prioritet</label>
               <select id="priority" name="priority" class="form-control" required>
-                <option value="Low">Low</option>
-                <option value="Medium" selected>Medium</option>
-                <option value="High">High</option>
-                <option value="Urgent">Urgent</option>
+                <option value="Low">Lav</option>
+                <option value="Medium" selected>Middels</option>
+                <option value="High">Høy</option>
+                <option value="Urgent">Kritisk</option>
               </select>
             </div>
             
             <div class="form-group">
-              <label for="description">Description</label>
+              <label for="description">Beskrivelse</label>
               <textarea
                 id="description"
                 name="description"
                 class="form-control"
                 rows="6"
-                placeholder="Provide details about your issue (minimum 10 characters)"
+                placeholder="Gi detaljer om ditt problem (minimum 10 tegn)"
                 required
               ></textarea>
-              <small class="form-text text-muted">Please provide at least 10 characters describing the issue</small>
+              <small class="form-text text-muted">Vennligst gi minst 10 tegn som beskriver problemet</small>
             </div>
             
             <div class="form-group">
-              <button type="submit" class="btn btn-primary">Submit Ticket</button>
-              <a href="/dashboard" class="btn btn-secondary">Cancel</a>
+              <button type="submit" class="btn btn-primary">Send Henvendelse</button>
+              <a href="/dashboard" class="btn btn-secondary">Avbryt</a>
             </div>
           </form>
         </div>

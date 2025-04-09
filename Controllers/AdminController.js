@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const Ticket = require('../models/Ticket');
+const Comment = require('../models/Comment');
+const Organization = require('../models/Organization');
 const Activity = require('../models/Activity');
 const activityService = require('../services/ActivityService');
 
@@ -44,46 +46,44 @@ const getUsers = async (req, res) => {
   }
 };
 
-// Promote user to admin
-const promoteUser = async (req, res) => {
+// Update user role
+const updateRole = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, { role: 'admin' }, { new: true });
+    const { role } = req.body;
+    const userId = req.params.id;
+    
+    // Don't allow changing your own role
+    if (userId === req.user.id) {
+      req.flash('error_msg', 'You cannot change your own role');
+      return res.redirect('/admin/users');
+    }
+    
+    // Validate the role is one of the allowed values
+    if (!['user', 'linje 1', 'linje 2', 'admin'].includes(role)) {
+      req.flash('error_msg', 'Invalid role specified');
+      return res.redirect('/admin/users');
+    }
+    
+    const user = await User.findByIdAndUpdate(userId, { role }, { new: true });
     
     if (!user) {
       req.flash('error_msg', 'User not found');
       return res.redirect('/admin/users');
     }
     
-    req.flash('success_msg', `${user.name} has been promoted to admin`);
+    // Log activity for the role change
+    await activityService.logActivity(
+      `changed ${user.name}'s role to ${role}`,
+      'user',
+      user._id,
+      req.user.id
+    );
+    
+    req.flash('success_msg', `${user.name}'s role has been updated to ${role}`);
     res.redirect('/admin/users');
   } catch (err) {
     console.error(err);
-    req.flash('error_msg', 'Error promoting user');
-    res.redirect('/admin/users');
-  }
-};
-
-// Demote admin to user
-const demoteUser = async (req, res) => {
-  try {
-    // Don't allow demoting yourself
-    if (req.params.id === req.user.id) {
-      req.flash('error_msg', 'You cannot demote yourself');
-      return res.redirect('/admin/users');
-    }
-    
-    const user = await User.findByIdAndUpdate(req.params.id, { role: 'user' }, { new: true });
-    
-    if (!user) {
-      req.flash('error_msg', 'User not found');
-      return res.redirect('/admin/users');
-    }
-    
-    req.flash('success_msg', `${user.name} has been demoted to user`);
-    res.redirect('/admin/users');
-  } catch (err) {
-    console.error(err);
-    req.flash('error_msg', 'Error demoting user');
+    req.flash('error_msg', 'Error updating user role');
     res.redirect('/admin/users');
   }
 };
@@ -93,6 +93,7 @@ const updateTicketStatus = async (req, res) => {
   try {
     const { status } = req.body;
     
+    // Allow linje 1, linje 2, and admin to update ticket status
     const ticket = await Ticket.findByIdAndUpdate(
       req.params.id,
       { 
@@ -108,6 +109,14 @@ const updateTicketStatus = async (req, res) => {
       req.flash('error_msg', 'Ticket not found');
       return res.redirect('/dashboard');
     }
+    
+    // Log activity
+    await activityService.logActivity(
+      `updated ticket status to ${status}`,
+      'ticket',
+      ticket._id,
+      req.user.id
+    );
     
     // Emit socket event for real-time status update
     const io = req.app.get('io');
@@ -127,10 +136,67 @@ const updateTicketStatus = async (req, res) => {
   }
 };
 
+// Delete user
+const deleteUser = async (req, res) => {
+  try {
+    // Don't allow deleting yourself
+    if (req.params.id === req.user.id) {
+      req.flash('error_msg', 'You cannot delete your own account');
+      return res.redirect('/admin/users');
+    }
+    
+    // Find the user to be deleted
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      req.flash('error_msg', 'User not found');
+      return res.redirect('/admin/users');
+    }
+    
+    const userName = user.name; // Store name for the success message
+    
+    // Delete user's tickets
+    await Ticket.deleteMany({ user: user._id });
+    
+    // Delete user's comments
+    await Comment.deleteMany({ user: user._id });
+    
+    // Remove user from any organizations they might be in
+    if (user.organization) {
+      // If user is the only one in their organization, delete the organization
+      const orgMemberCount = await User.countDocuments({ organization: user.organization });
+      if (orgMemberCount <= 1) {
+        await Organization.findByIdAndDelete(user.organization);
+      }
+    }
+    
+    // Delete user activities
+    await Activity.deleteMany({ user: user._id });
+    
+    // Finally delete the user
+    await User.findByIdAndDelete(req.params.id);
+    
+    // Log the activity
+    await activityService.logActivity(
+      `deleted user "${userName}"`,
+      'user',
+      null,
+      req.user.id
+    );
+    
+    req.flash('success_msg', `User ${userName} has been deleted`);
+    res.redirect('/admin/users');
+  } catch (err) {
+    console.error(err);
+    req.flash('error_msg', 'Error deleting user');
+    res.redirect('/admin/users');
+  }
+};
+
 module.exports = {
   getDashboard,
   getUsers,
-  promoteUser,
-  demoteUser,
-  updateTicketStatus
+  updateRole,
+  updateTicketStatus,
+  deleteUser
 };

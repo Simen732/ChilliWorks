@@ -44,8 +44,8 @@ const createTicket = async (req, res) => {
 const getTicket = async (req, res) => {
   try {
     const ticket = await Ticket.findById(req.params.id)
-                            .populate('user', 'name email')
-                            .populate('assignedTo', 'name email');
+                           .populate('user', 'name email')
+                           .populate('assignedTo', 'name email');
     
     // Check if ticket exists
     if (!ticket) {
@@ -54,20 +54,23 @@ const getTicket = async (req, res) => {
     }
     
     // Check if user has permission to view this ticket
-    if (req.user.role !== 'admin' && ticket.user._id.toString() !== req.user.id) {
+    // Allow linje 1, linje 2, and admin to view any ticket
+    const isSupport = ['linje 1', 'linje 2', 'admin'].includes(req.user.role);
+    if (!isSupport && ticket.user._id.toString() !== req.user.id) {
       req.flash('error_msg', 'Not authorized');
       return res.redirect('/dashboard');
     }
     
     // Get comments for this ticket
     const comments = await Comment.find({ ticket: ticket._id })
-                               .populate('user', 'name role')
-                               .sort({ createdAt: 1 });
+                              .populate('user', 'name role')
+                              .sort({ createdAt: 1 });
     
     res.render('tickets/view', {
       ticket,
       comments,
       isAdmin: req.user.role === 'admin',
+      isSupport: isSupport,
       currentUser: req.user
     });
   } catch (err) {
@@ -158,10 +161,16 @@ const deleteTicket = async (req, res) => {
       return res.redirect('/dashboard');
     }
     
-    // Check if user has permission to delete this ticket
-    if (req.user.role !== 'admin' && ticket.user.toString() !== req.user.id) {
-      req.flash('error_msg', 'Not authorized');
+    // UPDATED: Check if user is an admin
+    if (req.user.role !== 'admin') {
+      req.flash('error_msg', 'Not authorized - only administrators can delete tickets');
       return res.redirect('/dashboard');
+    }
+    
+    // NEW: Check if the ticket status is 'Closed'
+    if (ticket.status !== 'Closed') {
+      req.flash('error_msg', 'Only tickets with status "Closed" can be deleted');
+      return res.redirect(`/tickets/${req.params.id}`);
     }
     
     // Delete all comments for this ticket
@@ -169,6 +178,14 @@ const deleteTicket = async (req, res) => {
     
     // Delete the ticket
     await Ticket.findByIdAndDelete(req.params.id);
+    
+    // Log the activity
+    await activityService.logActivity(
+      `deleted ticket "${ticket.title}"`,
+      'ticket',
+      null,
+      req.user.id
+    );
     
     req.flash('success_msg', 'Ticket deleted successfully');
     res.redirect('/dashboard');
@@ -195,7 +212,7 @@ const addComment = async (req, res) => {
     }
     
     // Check if user has permission to comment on this ticket
-    if (req.user.role !== 'admin' && ticket.user.toString() !== req.user.id) {
+    if (!['admin', 'linje 1', 'linje 2'].includes(req.user.role) && ticket.user.toString() !== req.user.id) {
       if (req.xhr || req.headers.accept.indexOf('json') > -1) {
         return res.status(403).json({ error: 'Not authorized' });
       }

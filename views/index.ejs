@@ -1,16 +1,30 @@
 <%- include('./partials/header') %>
 
 <div class="container">
-  <div class="jumbotron text-center mt-5" style="background: linear-gradient(135deg, rgba(40, 49, 65, 0.9), rgba(45, 55, 72, 0.9)); border: 1px solid var(--primary-color); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(74, 111, 165, 0.2); padding: 3rem;">
-    <h1 class="display-4" style="color: white; text-shadow: 0 0 10px rgba(74, 111, 165, 0.3);">Welcome to the Help Desk</h1>
-    <p class="lead" style="color: rgba(233, 236, 239, 0.9);">A modern ticketing system for managing support requests</p>
-    <hr class="my-4" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); height: 2px; border: none; opacity: 0.5;">
-    <p style="color: rgba(233, 236, 239, 0.8);">Get started by creating an account or logging in</p>
-    <div class="mt-4">
-      <a href="/auth/login" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Login</a>
-      <a href="/auth/register" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Register</a>
+  <% if (!user) { %>
+    <!-- Content for non-logged in users -->
+    <div class="jumbotron text-center mt-5" style="background: linear-gradient(135deg, rgba(40, 49, 65, 0.9), rgba(45, 55, 72, 0.9)); border: 1px solid var(--primary-color); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(74, 111, 165, 0.2); padding: 3rem;">
+      <h1 class="display-4" style="color: white; text-shadow: 0 0 10px rgba(74, 111, 165, 0.3);">Welcome to ChilliWorks</h1>
+      <p class="lead" style="color: rgba(233, 236, 239, 0.9);">A modern ticketing system for managing support requests</p>
+      <hr class="my-4" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); height: 2px; border: none; opacity: 0.5;">
+      <p style="color: rgba(233, 236, 239, 0.8);">Get started by creating an account or logging in</p>
+      <div class="mt-4">
+        <a href="/auth/login" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Login</a>
+        <a href="/auth/register" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Register</a>
+      </div>
     </div>
-  </div>
+  <% } else { %>
+    <!-- Content for logged in users -->
+    <div class="jumbotron text-center mt-5" style="background: linear-gradient(135deg, rgba(40, 49, 65, 0.9), rgba(45, 55, 72, 0.9)); border: 1px solid var(--primary-color); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(74, 111, 165, 0.2); padding: 3rem;">
+      <h1 class="display-4" style="color: white; text-shadow: 0 0 10px rgba(74, 111, 165, 0.3);">Welcome Back, <%= user.name %>!</h1>
+      <p class="lead" style="color: rgba(233, 236, 239, 0.9);">Thank you for using ChilliWorks</p>
+      <hr class="my-4" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); height: 2px; border: none; opacity: 0.5;">
+      <div class="mt-4">
+        <a href="/dashboard" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Go to Dashboard</a>
+        <a href="/tickets/create" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Submit a Ticket</a>
+      </div>
+    </div>
+  <% } %>
   
   <div class="row mt-5">
     <div class="col-md-4">

@@ -1,22 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const { ensureAuthenticated, ensureAdmin } = require('../middleware/auth');
+const { ensureAuthenticated, ensureAdmin, ensureSupport } = require('../middleware/auth');
 const AdminController = require('../Controllers/AdminController');
 const OrganizationController = require('../Controllers/OrganizationController')
-// Admin dashboard
+// Admin dashboard - only for admins
 router.get('/dashboard', [ensureAuthenticated, ensureAdmin], AdminController.getDashboard);
 
-// User management page
+// User management - only for admins
 router.get('/users', [ensureAuthenticated, ensureAdmin], AdminController.getUsers);
+router.put('/users/:id/role', [ensureAuthenticated, ensureAdmin], AdminController.updateRole);
+router.delete('/users/:id', [ensureAuthenticated, ensureAdmin], AdminController.deleteUser);
 
-// Promote user to admin
-router.put('/users/:id/promote', [ensureAuthenticated, ensureAdmin], AdminController.promoteUser);
-
-// Demote admin to user
-router.put('/users/:id/demote', [ensureAuthenticated, ensureAdmin], AdminController.demoteUser);
-
-// Update ticket status
-router.put('/tickets/:id/status', [ensureAuthenticated, ensureAdmin], AdminController.updateTicketStatus);
+// Update ticket status - allow support staff
+router.put('/tickets/:id/status', [ensureAuthenticated, ensureSupport], AdminController.updateTicketStatus);
 
 // Organization routes
 router.get('/organizations', [ensureAuthenticated, ensureAdmin], OrganizationController.getOrganizations);

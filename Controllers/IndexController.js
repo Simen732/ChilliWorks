@@ -19,7 +19,9 @@ const getDashboard = async (req, res) => {
 
     switch(req.user.role) {
       case 'admin':
-        // Admin dashboard shows all tickets
+      case 'linje 1':
+      case 'linje 2':
+        // Admin and support staff see all tickets
         tickets = await Ticket.find()
                           .populate('user', 'name email')
                           .populate('assignedTo', 'name email')
@@ -58,6 +60,7 @@ const getDashboard = async (req, res) => {
     res.render('dashboard', {
       tickets,
       isAdmin: req.user.role === 'admin',
+      isSupport: ['linje 1', 'linje 2', 'admin'].includes(req.user.role),
       userOrg
     });
   } catch (err) {

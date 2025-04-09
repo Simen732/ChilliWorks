@@ -790,3 +790,36 @@ footer {
 .organization-card:hover .btn-primary:hover span {
   color: #fff !important; /* Ensure text inside button spans remains white */
 }
+
+/* Add this to your existing CSS */
+.disabled-btn {
+  opacity: 0.65;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.disabled-btn:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: rgba(40, 49, 65, 0.9);
+  color: white;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 100;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Add to your existing CSS */
+.role-select-container {
+  max-width: 260px;
+}
+
+.role-select {
+  width: auto;
+  min-width: 120px;
+}

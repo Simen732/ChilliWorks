@@ -87,11 +87,31 @@ const ensureSameOrganization = (req, res, next) => {
   next();
 };
 
+// Ensure user is support staff (linje 1, linje 2 or admin)
+const ensureSupport = (req, res, next) => {
+  if (!req.user || !['linje 1', 'linje 2', 'admin'].includes(req.user.role)) {
+    req.flash('error_msg', 'Not authorized');
+    return res.redirect('/dashboard');
+  }
+  next();
+};
+
+// Ensure user is advanced support (linje 2 or admin)
+const ensureAdvancedSupport = (req, res, next) => {
+  if (!req.user || !['linje 2', 'admin'].includes(req.user.role)) {
+    req.flash('error_msg', 'Not authorized');
+    return res.redirect('/dashboard');
+  }
+  next();
+};
+
 module.exports = {
   verifyToken,
   ensureAuthenticated,
   ensureGuest,
   ensureAdmin,
   ensureManager,
-  ensureSameOrganization
+  ensureSameOrganization,
+  ensureSupport,
+  ensureAdvancedSupport
 };

@@ -47,6 +47,23 @@
     </div>
   </div>
 
+  <div class="row mb-3">
+    <div class="col-md-12">
+      <!-- Enhance the search input with a clear button -->
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text"><i class="fas fa-search"></i></span>
+        </div>
+        <input type="text" id="ticketSearch" class="form-control" placeholder="Search tickets by title or description...">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-header">
       <h3>Your Tickets</h3>
@@ -113,75 +130,75 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-  // Filter tickets by status
-  document.getElementById('ticketFilter').addEventListener('change', function() {
-    const selectedStatus = this.value;
-    const tickets = document.querySelectorAll('.ticket');
+  // Store references to DOM elements
+  const statusFilter = document.getElementById('ticketFilter');
+  const searchFilter = document.getElementById('ticketSearch');
+  const tickets = document.querySelectorAll('.ticket');
+  
+  // Function to apply both filters simultaneously
+  function applyFilters() {
+    const selectedStatus = statusFilter.value;
+    const searchTerm = searchFilter.value.trim().toLowerCase();
     
     tickets.forEach(ticket => {
-      if (selectedStatus === 'all' || ticket.dataset.status === selectedStatus) {
+      const matchesStatus = selectedStatus === 'all' || ticket.dataset.status === selectedStatus;
+      
+      // Get searchable content from the ticket
+      const title = ticket.querySelector('h4 a').textContent.toLowerCase();
+      const category = ticket.querySelector('.category').textContent.toLowerCase();
+      const priority = ticket.querySelector('.priority').textContent.toLowerCase();
+      
+      // Optional: get description if available
+      let description = '';
+      const descriptionElement = ticket.querySelector('.ticket-description p');
+      if (descriptionElement) {
+        description = descriptionElement.textContent.toLowerCase();
+      }
+      
+      // Check if search term is found in any of the ticket's content
+      const matchesSearch = searchTerm === '' || 
+                           title.includes(searchTerm) || 
+                           category.includes(searchTerm) || 
+                           priority.includes(searchTerm) ||
+                           description.includes(searchTerm);
+      
+      // Show ticket only if it matches both filters
+      if (matchesStatus && matchesSearch) {
         ticket.style.display = 'flex';
       } else {
         ticket.style.display = 'none';
       }
     });
-  });
-
-  // Use the global socket connection for dashboard-specific functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    if (window.appSocket) {
-      const socket = window.appSocket;
-      
-      // Listen for status updates
-      socket.on('status-update', data => {
-        updateTicketStatusInList(data);
-      });
-    }
     
-    // Function to update ticket status in the list
-    function updateTicketStatusInList(data) {
-      const ticketElement = document.querySelector(`.ticket[data-ticket-id="${data.ticketId}"]`);
-      if (ticketElement) {
-        // Update status data attribute
-        ticketElement.dataset.status = data.status;
-        
-        // Update status badge
-        const statusBadge = ticketElement.querySelector('.status');
-        if (statusBadge) {
-          // Remove old status classes
-          statusBadge.classList.forEach(className => {
-            if (className.startsWith('status-')) {
-              statusBadge.classList.remove(className);
-            }
-          });
-          
-          // Add new status class
-          const newStatusClass = `status-${data.status.toLowerCase().replace(/\s+/g, '-')}`;
-          statusBadge.classList.add(newStatusClass);
-          
-          // Update text
-          statusBadge.textContent = data.status;
-        }
-        
-        // Update status dropdown if admin
-        const statusSelect = ticketElement.querySelector('select[name="status"]');
-        if (statusSelect) {
-          statusSelect.value = data.status;
-        }
-        
-        // Show notification
-        showNotification(`Ticket status updated to ${data.status} by ${data.updatedBy}`);
-        
-        // Reapply filter if necessary
-        const currentFilter = document.getElementById('ticketFilter').value;
-        if (currentFilter !== 'all' && currentFilter !== data.status) {
-          ticketElement.style.display = 'none';
-        } else {
-          ticketElement.style.display = 'flex';
-        }
+    // Show message if no tickets match the filters
+    const visibleTickets = document.querySelectorAll('.ticket[style="display: flex;"]');
+    const noResultsMessage = document.getElementById('no-results-message');
+    
+    if (visibleTickets.length === 0 && tickets.length > 0) {
+      if (!noResultsMessage) {
+        const message = document.createElement('div');
+        message.id = 'no-results-message';
+        message.className = 'alert alert-info mt-3';
+        message.textContent = 'No tickets match your search criteria.';
+        document.querySelector('.ticket-list').appendChild(message);
       }
+    } else if (noResultsMessage) {
+      noResultsMessage.remove();
     }
+  }
+  
+  // Add event listeners
+  statusFilter.addEventListener('change', applyFilters);
+  searchFilter.addEventListener('input', applyFilters);
+  
+  // Add clear button functionality
+  document.getElementById('clearSearch').addEventListener('click', function() {
+    document.getElementById('ticketSearch').value = '';
+    applyFilters();
   });
+  
+  // Apply initial filtering (in case of page reload with filled search box)
+  applyFilters();
 </script>
 
 <%- include('./partials/footer') %>

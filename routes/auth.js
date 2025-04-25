@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { ensureGuest } = require('../middleware/auth');
 const AuthController = require('../controllers/AuthController');
-const { authLimiter } = require('../middleware/rateLimiter');
+const { authLimiter, loginAttemptsLimiter } = require('../middleware/rateLimiter');
 
 // Login page
 router.get('/login', ensureGuest, AuthController.getLogin);
@@ -13,8 +13,8 @@ router.get('/register', ensureGuest, AuthController.getRegister);
 // Register handle - add rate limiter
 router.post('/register', authLimiter, AuthController.postRegister);
 
-// Login handle - add rate limiter
-router.post('/login', authLimiter, AuthController.postLogin);
+// Login handle - add both limiters
+router.post('/login', [authLimiter, loginAttemptsLimiter], AuthController.postLogin);
 
 // Logout
 router.get('/logout', AuthController.logout);

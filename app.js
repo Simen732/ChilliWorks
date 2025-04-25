@@ -11,7 +11,7 @@ const dotenv = require('dotenv');
 const http = require('http');
 const socketIo = require('socket.io');
 const { standardLimiter } = require('./middleware/rateLimiter');
-
+const helmet = require('helmet');
 
 // Load env vars
 dotenv.config();
@@ -20,6 +20,24 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+
+// Apply Helmet with enhanced configuration
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+      connectSrc: ["'self'", "wss:", "ws:"] // Allow WebSocket connections
+    },
+  },
+  hsts: {
+    maxAge: 31536000, // 1 year in seconds
+    includeSubDomains: true,
+    preload: true
+  }
+}));
 
 // Apply rate limiting to all requests
 app.use(standardLimiter);
@@ -98,7 +116,10 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: { 
-    maxAge: 60 * 60 * 1000 // 1 hour - only used for flash messages, not authentication
+    maxAge: 60 * 60 * 1000, // 1 hour - only used for flash messages, not authentication
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Only in production
+    sameSite: 'strict'
   }
 }));
 

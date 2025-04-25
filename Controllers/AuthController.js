@@ -33,8 +33,13 @@ class AuthController {
     }
 
     // Check password length
-    if (password.length < 6) {
-      errors.push({ msg: 'Password should be at least 6 characters' });
+    if (password.length < 10) {  // Increase from 6 to 10
+      errors.push({ msg: 'Password should be at least 10 characters' });
+    }
+
+    // Add complexity check
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/.test(password)) {
+      errors.push({ msg: 'Password must include at least one uppercase letter, one lowercase letter, and one number' });
     }
 
     if (errors.length > 0) {
@@ -128,9 +133,11 @@ class AuthController {
       );
       
       // Set secure httpOnly JWT cookie for authentication
-      res.cookie('token', token, {
-        httpOnly: true,
-        maxAge: 12 * 60 * 60 * 1000 // 12 hours
+      res.cookie('jwt', token, {
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === 'production', // Secure in production
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
       });
 
       // Set a non-httpOnly cookie for Socket.IO auth

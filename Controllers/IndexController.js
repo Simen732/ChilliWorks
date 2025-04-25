@@ -3,7 +3,13 @@ const Ticket = require('../models/Ticket');
 class IndexController {
   // Home page
   getHomePage(req, res) {
-    res.render('index');
+    // Check if user is already authenticated
+    const isAuthenticated = req.isAuthenticated?.() || req.user != null;
+    
+    res.render('index', {
+      isAuthenticated: isAuthenticated,
+      user: req.user || null
+    });
   }
 
   // Dashboard

@@ -5,11 +5,21 @@
     <h1 class="display-4" style="color: white; text-shadow: 0 0 10px rgba(74, 111, 165, 0.3);">Welcome to the Help Desk</h1>
     <p class="lead" style="color: rgba(233, 236, 239, 0.9);">A modern ticketing system for managing support requests</p>
     <hr class="my-4" style="background: linear-gradient(to right, var(--primary-color), var(--accent-purple)); height: 2px; border: none; opacity: 0.5;">
-    <p style="color: rgba(233, 236, 239, 0.8);">Get started by creating an account or logging in</p>
-    <div class="mt-4">
-      <a href="/auth/login" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Login</a>
-      <a href="/auth/register" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Register</a>
-    </div>
+    
+    <% if (typeof user !== 'undefined' && user) { %>
+      <!-- Content for logged-in users -->
+      <p style="color: rgba(233, 236, 239, 0.8);">Welcome back, <%= user.name %>!</p>
+      <div class="mt-4">
+        <a href="/dashboard" class="btn btn-primary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Go to Dashboard</a>
+      </div>
+    <% } else { %>
+      <!-- Content for guests -->
+      <p style="color: rgba(233, 236, 239, 0.8);">Get started by creating an account or logging in</p>
+      <div class="mt-4">
+        <a href="/auth/login" class="btn btn-primary btn-lg mr-3" style="padding: 0.8rem 2rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Login</a>
+        <a href="/auth/register" class="btn btn-secondary btn-lg" style="padding: 0.8rem 2rem; border-radius: 50px; background: linear-gradient(to right, var(--secondary-color), var(--info-color)); box-shadow: 0 4px 15px rgba(74, 111, 165, 0.3);">Register</a>
+      </div>
+    <% } %>
   </div>
   
   <div class="row mt-5">

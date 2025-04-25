@@ -34,8 +34,24 @@ const ticketLimiter = rateLimit({
   message: 'Too many ticket operations, please try again later.',
 });
 
+// Add a new limiter specifically for failed login attempts
+const loginAttemptsLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 failed attempts per IP+username combination
+  standardHeaders: true,
+  keyGenerator: (req) => {
+    return req.ip + '-' + (req.body.email || '');
+  },
+  handler: (req, res) => {
+    res.status(429).render('auth/login', {
+      error_msg: 'Too many failed login attempts. Account temporarily locked for 15 minutes.'
+    });
+  }
+});
+
 module.exports = {
   standardLimiter,
   authLimiter,
-  ticketLimiter
+  ticketLimiter,
+  loginAttemptsLimiter
 };
